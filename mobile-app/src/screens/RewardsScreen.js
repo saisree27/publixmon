@@ -11,7 +11,7 @@ export default RewardsScreen = () => {
 
     const [user, setUser] = useContext(UserContext);
     const firebase = useContext(FirebaseContext);
-    const [coupons, setCoupons] = useState([{code: "1234", name: "5% off next purchase of $10 or more!"}, {code: "1243", name: "Buy 1 get 1 free for any Kellogg's cereal box!"}]);
+    const [coupons, setCoupons] = useState([]);
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
