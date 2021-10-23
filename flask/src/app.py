@@ -99,7 +99,7 @@ def add_coupon(email):
     num = random.randint(0, 9)
     if num == 0:
         # add coupon
-        coupon_choices = ["5% off next purchase!", "$2 off any purchase of $10 or more!", "Spend $75 or more and get $10 back!", "Buy 1 get 1 free for any box of cereal!"]
+        coupon_choices = [{"name": "5% off next purchase!", "code": "1234"}, {"name": "Buy 1 get 1 free for any box of Kellogg's cereal!", "code": "1243"}]
         choice = random.randint(0, len(coupon_choices) - 1)
         coupon = coupon_choices[choice]
         if email in active_users:
