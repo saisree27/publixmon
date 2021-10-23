@@ -123,7 +123,7 @@ export default ProfileScreen = () => {
             <View style={{alignItems: "center", display: "flex", justifyContent: "center", padding: 16}}>
                 <Text style={[uStyles.body, {textAlign: "center"}]}>Done shopping at {store}? </Text>
                 <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => checkOut()}>
-                    <Feather name="log-out" size={24} color={colors.white}/>
+                    <Feather name="log-out" size={24} color={colors.dark}/>
                 </TouchableOpacity>
 
  
