@@ -53,7 +53,8 @@ export default ProfileScreen = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    image: result
+                    image: result,
+                    email: user.email,
                 })
             }).then((response) => response.json())
               .then((result) => {
