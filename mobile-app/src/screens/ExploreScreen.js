@@ -7,11 +7,10 @@ import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
 
 export default ExploreScreen = () => {
-    let temp = [{name: "starrynanas", image: ''}]
 
     const [user, setUser] = useContext(UserContext);
     const firebase = useContext(FirebaseContext);
-    const [portfolio, setPortfolio] = useState(temp);
+    const [portfolio, setPortfolio] = useState([]);
     const [score, setScore] = useState(0)
 
     useEffect(() => {
@@ -24,7 +23,7 @@ export default ExploreScreen = () => {
         let count = 0
         for (let item in portfolio) {
             count += 1
-            types["name"] = true
+            types[item["name"]] = true
         }
         return count * Object.keys(types).length;
     }
@@ -33,8 +32,9 @@ export default ExploreScreen = () => {
     return (
         <View style={styles.container}>
 
-            <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>{user.email.toLowerCase()}</Text>
+            {/* <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>{user.email.toLowerCase()}</Text> */}
             <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>Your collection is worth {score} points!</Text>
+            <Text style={[uStyles.body, {textAlign: "center", marginBottom: 16, paddingHorizontal: 16}]}>A larger, more varied collection gets you more points and more rewards!</Text>
 
 
 
