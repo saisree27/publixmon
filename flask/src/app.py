@@ -1,5 +1,12 @@
 from flask import Flask
 from flask import request, jsonify
+import random
+import base64
+import numpy as np
+import cv2 as cv
+from style_transfer import data_uri_to_cv2_img, get_style_transfer
+import requests
+from urllib.request import urlopen
 
 app = Flask(__name__)
 
@@ -19,7 +26,7 @@ def home():
 @app.route('/adduser', methods = ['POST'])
 def add_user():
     email = request.json['email']
-    user = inactive_users.pop(email, {})
+    user = inactive_users.pop(email, {"location": None, "portfolio": [], "promos": []})
     active_users[email] = user
     return True
 
@@ -34,32 +41,45 @@ def remove_user():
 def update_location():
     email = request.json['email']
     location = request.json['location']
-    active_users[email] = {location: location}
+    active_users[email] = {"location": location}
     return True
 
+@app.route('/getportfolio', methods = ['POST'])
+def get_portfolio():
+    email = request.json['email']
+    if email in active_users:
+        return active_users[email]['portfolio']
+    elif email in inactive_users:
+        return inactive_users[email]['portfolio'] 
+    return []
 
 
 # TODO: ML routes (and corresponding user data routes to store toys and other info)
+@app.route('/styletransfer', methods = ['POST'])
+def transfer_style():
+    url = request.json["image"]
+    
+    print ('[INFO] Reading the image')
+    req = urlopen(url)
+    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+    img = cv.imdecode(arr, -1)
+    print ('[INFO] Image Loaded successfully!')
+
+    styled_loc, name = get_style_transfer(img)
+
+    with open(styled_loc, "rb") as f:
+        st_image = base64.b64encode(f.read())
+
+    return jsonify(
+        style_transfer=str(st_image)[2:-1],
+        img_name=name +  url[url.rindex("/") + 1:url.index(".jp")]
+    )
+    
 
 # TODO: NCR API routes (and corresponding user data routes)
 
 
 # helper functions
-def calculate_portfolio_score(email):
-    portfolio = []
-    if email in active_users:
-        portfolio = active_users[email][portfolio]
-    elif email in inactive_users:
-        portfolio = inactive_users[email][portfolio]
-    else:
-        return 0
-    types = {} # TODO: exact naming may change based on NCR API
-    count = 0
-    for item in portfolio:
-        types[item['type']] = True
-        count += 1
-    return count * len(types.items()) # calculate score on portfolio size and variety
-
 def add_toy(email, toy):
     if email in active_users:
         portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
@@ -71,7 +91,22 @@ def add_toy(email, toy):
         inactive_users[email]['portfolio'] = portfolio
     else:
         return False
+
+    add_coupon(email)
     return True
+
+def add_coupon(email):
+    num = random.randint(0, 9)
+    if num == 0:
+        # add coupon
+        coupon_choices = ["5% off next purchase!", "$2 off any purchase of $10 or more!", "Spend $75 or more and get $10 back!", "Buy 1 get 1 free for any box of cereal!"]
+        choice = random.randint(0, len(coupon_choices) - 1)
+        coupon = coupon_choices[choice]
+        if email in active_users:
+            active_users[email]['coupons'].append(coupon)
+        elif email in inactive_users:
+            inactive_users[email]['coupons'].append(coupon)
+
 
 
 # run the app

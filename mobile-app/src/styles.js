@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native'
 
 // for theming that needs to be consistently reused across the app
 const colors = {
-    primary: "#87BB00",//"#E9446A",
+    primary: "#ff8c08",//"#E9446A",
     white: "#FEFCFD",
     black: "#272727",//#010400",
     dark: "#384051",//"#1d3557",//"#5603AD"

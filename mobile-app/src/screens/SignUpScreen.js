@@ -21,22 +21,18 @@ export default SignUpScreen = ({navigation}) => {
     const[_, setUser] = useContext(UserContext);
 
     const handleSignup = async () => {
-        if(name.length > 0){
-            setLoading(true);
-            const user = {name, email, password, profilePhoto}
-    
-            try {  
-                const createdUser = await firebase.createUser(user);
-                setUser({...createdUser, isLoggedIn: true})
-                setErrorMessage("Please check for a verification email.");
-            } catch (error) {
-                console.log("Error @handleSignup: ", error.message);
-                setErrorMessage(error.message);
-            } finally {
-                setLoading(false);
-            }
-        } else {
-            setErrorMessage("A name is required.")
+        setLoading(true);
+        const user = {name, email, password}
+
+        try {  
+            const createdUser = await firebase.createUser(user);
+            setUser({...createdUser, isLoggedIn: true})
+            setErrorMessage("Please check for a verification email.");
+        } catch (error) {
+            console.log("Error @handleSignup: ", error.message);
+            setErrorMessage(error.message);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -69,7 +65,7 @@ export default SignUpScreen = ({navigation}) => {
                 </View>
                 
                 <View style={styles.form}>
-                    <View>
+                    {/* <View>
                         <Text style={uStyles.subheader}>Username</Text>
                         <TextInput 
                             style={uStyles.input} 
@@ -80,7 +76,7 @@ export default SignUpScreen = ({navigation}) => {
                             value={name}
                             maxLength={100}
                         ></TextInput>
-                    </View>
+                    </View> */}
 
                     <View style={{marginTop: 16}}>
                         <Text style={uStyles.subheader}>Email</Text>
