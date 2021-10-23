@@ -91,8 +91,6 @@ def get_style_transfer(image):
     h, w  = img.shape[:2]
 
     out = predict(img, h, w, net)
-    cv.imshow('Stylized image', out)
-
     out = 255 * (out - out.min()) / (out.max() - out.min())
     out = np.array(out, np.int)
     
