@@ -8,11 +8,12 @@ import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
 import {ImageUpload} from '../scripts/ImageUpload'
+import { apiBackend } from '../scripts/NCR';
 
 console.disableYellowBox = true;
 
 const { manifest } = Constants;
-const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
+const uri = `https://hackgt-8-publixmon.herokuapp.com/`;
 
 export default ProfileScreen = () => {
     const [user, setUser] = useContext(UserContext);
@@ -41,11 +42,31 @@ export default ProfileScreen = () => {
                 email: user.email,
             })
         });
+        // Get random item from NCR API
+        apiBackend().then((result) => {
+            console.log(result);    
+            // TODO: generate toys on backend
+            fetch(uri + "/styletransfer", {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    image: result
+                })
+            }).then((response) => response.json())
+              .then((result) => {
+                  console.log(result.img_name);
+                  // maybe have a toy screen that presents the toy
+              })
+        })
 
-        // TODO: generate toys on backend
+
     }
 
     const checkIn = async () => {
+        // checkOut();
         const { status } = await BarCodeScanner.requestPermissionsAsync();
         if (status !== 'granted') {
             alert("Please give this app camera permissions to be able to check in to stores!")
