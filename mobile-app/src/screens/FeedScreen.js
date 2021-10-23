@@ -45,6 +45,11 @@ export default FeedScreen = () => {
         setRegion({...location, latitudeDelta: 0.001, longitudeDelta: 0.001})
         
         // update user location on server
+       updateUserLocation();
+
+    }, [location])
+
+    const updateUserLocation = async () => {
         let res = await fetch(uri + "/updatelocation", {
             method: 'POST',
             headers: {
@@ -56,7 +61,7 @@ export default FeedScreen = () => {
                 location: location
             })
         });
-    }, [location])
+    }
 
     const updateLocations = async () => {
         // get locations of other users in same store from server
