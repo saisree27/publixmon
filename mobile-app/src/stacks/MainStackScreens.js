@@ -6,6 +6,7 @@ import FeedScreen from '../screens/FeedScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 import ExploreScreen from '../screens/ExploreScreen'
 import {uStyles, colors} from '../styles.js'
+import RewardsScreen from '../screens/RewardsScreen'
 
 export default MainStackScreens = () => {
     const MainStack = createBottomTabNavigator();
@@ -28,6 +29,9 @@ export default MainStackScreens = () => {
                 case "Check In and Out":
                     iconName = "log-in";
                     break;
+                case "Rewards":
+                    iconName = "dollar-sign";
+                    break;
                 default:
                     iconName = "home";
             }
@@ -44,6 +48,7 @@ export default MainStackScreens = () => {
             <MainStack.Screen name="Check In and Out" component={ProfileScreen}/>
             <MainStack.Screen name="People Nearby" component={FeedScreen}/>
             <MainStack.Screen name="Your Portfolio" component={ExploreScreen}/>
+            <MainStack.Screen name="Rewards" component={RewardsScreen}/>
         </MainStack.Navigator>
     );
 }
