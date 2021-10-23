@@ -20,7 +20,7 @@ export default MainStackScreens = () => {
         tabBarIcon: ({focused}) => {
             let iconName = "";
             switch (route.name) {
-                case "People Nearby":
+                case "Collectors Nearby":
                     iconName = "compass";
                     break;
                 case "Your Portfolio":
@@ -46,7 +46,7 @@ export default MainStackScreens = () => {
     return (
         <MainStack.Navigator tabBarOptions={tabBarOptions} screenOptions={screenOptions}>
             <MainStack.Screen name="Check In and Out" component={ProfileScreen}/>
-            <MainStack.Screen name="People Nearby" component={FeedScreen}/>
+            <MainStack.Screen name="Collectors Nearby" component={FeedScreen}/>
             <MainStack.Screen name="Your Portfolio" component={ExploreScreen}/>
             <MainStack.Screen name="Rewards" component={RewardsScreen}/>
         </MainStack.Navigator>
