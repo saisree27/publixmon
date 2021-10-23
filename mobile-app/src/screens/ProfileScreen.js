@@ -2,12 +2,17 @@ import React, {useContext, useEffect, useState} from 'react'
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, FlatList, Modal} from 'react-native'
 import {Feather, AntDesign} from "@expo/vector-icons";
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import Constants from "expo-constants";
 
 import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
 import {ImageUpload} from '../scripts/ImageUpload'
+
 console.disableYellowBox = true;
+
+const { manifest } = Constants;
+const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
 
 export default ProfileScreen = () => {
     const [user, setUser] = useContext(UserContext);
@@ -15,11 +20,6 @@ export default ProfileScreen = () => {
 
     const [scanned, setScanned] = useState(false);
     const [store, setStore] = useState("");
-
-    useEffect(() => {
-
-    }, []);
-
 
     const logOut = async () => {
         const loggedOut = await firebase.logOut();
@@ -30,7 +30,17 @@ export default ProfileScreen = () => {
 
     const checkOut = async () => {
         setScanned(false);
-        // TODO: remove user from active users, clear their store field
+        // remove user from active users, clear their store field, put in inactive users
+        let res = await fetch(uri + "/removeuser", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+            })
+        });
 
         // TODO: generate toys on backend
     }
@@ -40,16 +50,30 @@ export default ProfileScreen = () => {
         if (status !== 'granted') {
             alert("Please give this app camera permissions to be able to check in to stores!")
         }
-        // TODO: add user to active users, update their store field
+        // add user to active users, update their store field
+        let res = await fetch(uri + "/adduser", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+                store: store
+            })
+        });
+        
 
     }
 
     const handleBarCodeScanned = ({ type, data }) => {
-        setScanned(true);
         if (data.includes("publixmon_store_id=")) {
+            setScanned(true);
             let place = data.split("=")[1]
             setStore(place)
+            setUser(state => ({...state, store: place}))
             alert(`Successfully checked in to ` + place + "!");
+            checkIn();
         }
     };
 
