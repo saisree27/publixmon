@@ -89,7 +89,8 @@ def delete_coupon():
 @app.route('/styletransfer', methods = ['POST'])
 def transfer_style():
     url = request.json["image"]
-    
+    email = request.json["email"]
+
     print ('[INFO] Reading the image')
     req = urlopen(url)
     arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
@@ -101,9 +102,25 @@ def transfer_style():
     with open(styled_loc, "rb") as f:
         st_image = base64.b64encode(f.read())
 
+    new_img = str(st_image)[2:-1]
+    n = name +  url[url.rindex("/") + 1:url.index(".jp")]
+
+    new_toy = {"name": n, "image": new_img}
+
+    if email in active_users:
+        portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
+        portfolio.append(new_toy)
+        active_users[email]['portfolio'] = portfolio
+    elif email in inactive_users:
+        portfolio = inactive_users[email]['portfolio']
+        portfolio.append(new_toy)
+        inactive_users[email]['portfolio'] = portfolio
+    else:
+        print("This doesn't make sense. The email does not exist!")
+    
     return jsonify(
-        style_transfer=str(st_image)[2:-1],
-        img_name=name +  url[url.rindex("/") + 1:url.index(".jp")]
+        style_transfer=new_img,
+        img_name=n
     )
     
 
