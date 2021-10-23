@@ -5,16 +5,16 @@ import time
 import os
 
 NAMES = {
-    "../models/eccv16/composition_vii.t7": "Composition VII on a ",
-    "../models/eccv16/la_muse.t7": "La Muse on a ",
-    "../models/eccv16/starry_night.t7": "Starry Night on a ",
-    "../models/eccv16/the_wave.t7": "The Wave on a ",
-    "../models/instance_norm/candy.t7": "Candy on a ",
-    "../models/instance_norm/feathers.t7": "Feathers on a ",
-    "../models/instance_norm/la_muse.t7": "La Muse on a ",
-    "../models/instance_norm/mosaic.t7": "Mosaic on a ",
-    "../models/instance_norm/the_scream.t7": "The Scream on a ",
-    "../models/instance_norm/udnie.t7": "Udnie on a ",
+    "./models/eccv16/composition_vii.t7": "Composition VII on a ",
+    "./models/eccv16/la_muse.t7": "La Muse on a ",
+    "./models/eccv16/starry_night.t7": "Starry Night on a ",
+    "./models/eccv16/the_wave.t7": "The Wave on a ",
+    "./models/instance_norm/candy.t7": "Candy on a ",
+    "./models/instance_norm/feathers.t7": "Feathers on a ",
+    "./models/instance_norm/la_muse.t7": "La Muse on a ",
+    "./models/instance_norm/mosaic.t7": "Mosaic on a ",
+    "./models/instance_norm/the_scream.t7": "The Scream on a ",
+    "./models/instance_norm/udnie.t7": "Udnie on a ",
 }
 
 def absoluteFilePaths(directory):
