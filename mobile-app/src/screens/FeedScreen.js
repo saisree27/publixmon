@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react'
+import React, {useState, useEffect, useContext, useRef} from 'react'
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, FlatList, Modal, ScrollView, Dimensions} from 'react-native'
 import {StatusBar} from 'expo-status-bar';
 import {Feather} from "@expo/vector-icons";
@@ -12,30 +12,46 @@ import checkIfFirstLaunch from '../scripts/CheckFirstLaunch';
 
 export default FeedScreen = () => {
     const firebase = useContext(FirebaseContext);
+    const mapRef = useRef()
     const [location, setLocation] = useState();
-    
+    const [region, setRegion] = useState();
 
     useEffect(() => {
         const _getLocationAsync = async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                console.log('denied')
+                alert("Please give this app location permissions to be able to meet and trade with others!")
             }
             let locations = await Location.watchPositionAsync({ accuracy: Location.Accuracy.High, timeInterval: 10000, distanceInterval: 1 }, (loc) => setLocation(loc.coords));           
         }
         _getLocationAsync()
+
+        const interval = setInterval(() => {
+            updateLocations();
+          }, 10000); // 10 seconds
+        
+          return () => clearInterval(interval);
     }, [])
 
     useEffect(() => {
-        // TODO: update marker locally
-        // TODO: update location on server
+        setRegion({...location, latitudeDelta: 0.001, longitudeDelta: 0.001})
+        
+     
+        // TODO: update user location on server
     }, [location])
+
+    const updateLocations = async () => {
+        // TODO: get locations of other users in same store from server
+        console.log('todo')
+    }
  
 
     return (
         <View style={styles.container}>
             <View>
-                <MapView style={styles.map} pointerEvents="none"/>
+                <MapView style={styles.map} minZoomLevel={18} region={region}>
+                    <Marker coordinate={location} title={"You"}/>
+                </MapView>
             </View>
 
             <StatusBar style="dark" />
