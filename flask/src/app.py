@@ -1,5 +1,11 @@
 from flask import Flask
 from flask import request, jsonify
+import base64
+import numpy as np
+import cv2 as cv
+from style_transfer import data_uri_to_cv2_img, get_style_transfer
+import requests
+from urllib.request import urlopen
 
 app = Flask(__name__)
 
@@ -38,8 +44,27 @@ def update_location():
     return True
 
 
-
 # TODO: ML routes (and corresponding user data routes to store toys and other info)
+@app.route('/styletransfer', methods = ['POST'])
+def transfer_style():
+    url = request.json["image"]
+    
+    print ('[INFO] Reading the image')
+    req = urlopen(url)
+    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+    img = cv.imdecode(arr, -1)
+    print ('[INFO] Image Loaded successfully!')
+
+    styled_loc, name = get_style_transfer(img)
+
+    with open(styled_loc, "rb") as f:
+        st_image = base64.b64encode(f.read())
+
+    return jsonify(
+        style_transfer=str(st_image)[2:-1],
+        img_name=name +  url[url.rindex("/") + 1:url.index(".jp")]
+    )
+    
 
 # TODO: NCR API routes (and corresponding user data routes)
 
