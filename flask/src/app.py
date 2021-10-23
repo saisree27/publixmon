@@ -43,6 +43,7 @@ def update_location():
 
 # TODO: NCR API routes (and corresponding user data routes)
 
+
 # helper functions
 def calculate_portfolio_score(email):
     portfolio = []
