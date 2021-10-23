@@ -33,7 +33,7 @@ def add_user():
 @app.route('/removeuser', methods = ['POST'])
 def remove_user():
     email = request.json['email']
-    user = active_users.pop(email, None)
+    user = active_users.pop(email, {"location": None, "portfolio": [], "promos": [], "store": None})
     user['store'] = None
     inactive_users[email] = user
 
