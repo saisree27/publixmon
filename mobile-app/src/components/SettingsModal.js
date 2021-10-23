@@ -46,7 +46,7 @@ export default SettingsModal = (props) => {
                     text: "Yes",
                     onPress: () => {
                         firebase.getCurrentUser().delete();
-                        //TODO: delete posts and other things
+                        //TO-DO: delete posts and other things
                     }
                   }
                 ]

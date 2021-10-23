@@ -2,21 +2,42 @@ import React, {useContext, useEffect, useState} from 'react'
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, Image, FlatList, Modal} from 'react-native'
 import {Feather} from "@expo/vector-icons";
 import Barcode from 'react-native-barcode-expo';
+import Constants from "expo-constants";
 
 import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
 
+const { manifest } = Constants;
+const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
+
 export default RewardsScreen = () => {
 
     const [user, setUser] = useContext(UserContext);
     const firebase = useContext(FirebaseContext);
-    const [coupons, setCoupons] = useState([{code: "1234", name: "5% off next purchase of $10 or more!"}, {code: "1243", name: "Buy 1 get 1 free for any Kellogg's cereal box!"}]);
+    const [coupons, setCoupons] = useState([]);
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
-        // TODO: load coupons from server
+        loadCoupons();
     }, []);
+
+    const loadCoupons = async () => {
+        // load coupons from server
+        let res = await fetch(uri + "/getcoupons", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+            })
+        });
+        res = await res.json();
+        res = res.res;
+        setCoupons(res);
+    }
 
     const deleteCoupon = (index) => {
         let couponList = coupons; // delete coupon from frontend
@@ -56,7 +77,19 @@ const CouponView = (props) => {
 
     const redeem = () => {
         setBarcodeVisible(true);
-        // TODO: delete coupon from server
+        // delete coupon from server
+        let res = await fetch(uri + "/deletecoupon", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+                code: props.coupon.code
+            })
+        });
+
     }
 
     return (
