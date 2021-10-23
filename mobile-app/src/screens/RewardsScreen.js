@@ -75,7 +75,7 @@ export default RewardsScreen = () => {
 const CouponView = (props) => {
     const [barcodeVisible, setBarcodeVisible] = useState(false);
 
-    const redeem = () => {
+    const redeem = async () => {
         setBarcodeVisible(true);
         // delete coupon from server
         let res = await fetch(uri + "/deletecoupon", {
