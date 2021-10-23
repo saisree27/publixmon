@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, Sc
 import {Feather} from "@expo/vector-icons";
 import Barcode from 'react-native-barcode-expo';
 import Constants from "expo-constants";
+import * as Reanimatable from 'react-native-animatable';
 
 import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
@@ -12,6 +13,8 @@ const { manifest } = Constants;
 const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
 
 export default RewardsScreen = () => {
+
+    let temp = [{name: "Free food for life!", code: "1234"}, {name: "Dish soap 50% off", code: "2314"}]
 
     const [user, setUser] = useContext(UserContext);
     const firebase = useContext(FirebaseContext);
@@ -53,7 +56,7 @@ export default RewardsScreen = () => {
         <View style={styles.container}>
 
             {/* <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>{user.email.toLowerCase()}</Text> */}
-            <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>You have {coupons.length} rewards to redeem!</Text>
+            <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>You have <Text style={{color: colors.primary}}>{coupons.length} rewards</Text> to redeem!</Text>
 
 
 
@@ -75,7 +78,7 @@ export default RewardsScreen = () => {
 const CouponView = (props) => {
     const [barcodeVisible, setBarcodeVisible] = useState(false);
 
-    const redeem = () => {
+    const redeem = async () => {
         setBarcodeVisible(true);
         // delete coupon from server
         let res = await fetch(uri + "/deletecoupon", {
@@ -93,8 +96,8 @@ const CouponView = (props) => {
     }
 
     return (
-        <View>
-            <TouchableOpacity style={{padding: 8, backgroundColor: colors.light, borderRadius: 4, margin: 8}} onPress={() => redeem()}>
+        <Reanimatable.View animation={"tada"} duration={500}>
+            <TouchableOpacity style={{...uStyles.commentCard, backgroundColor: colors.light, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}} onPress={() => redeem()}>
                 <Text style={[uStyles.subheader, {padding: 4, textAlign: "center", color: colors.dark}]}>Redeem {props.coupon.name}</Text>
             </TouchableOpacity>
         
@@ -106,7 +109,7 @@ const CouponView = (props) => {
             >
                 <BarCodeModal coupon={props.coupon} close={() => {props.deleteCoupon(props.name); setBarcodeVisible(false);}}/>
             </Modal>
-        </View>
+        </Reanimatable.View>
         
                     
     )
@@ -130,6 +133,6 @@ const BarCodeModal = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.dark,
+        backgroundColor: colors.white,
     },
 });

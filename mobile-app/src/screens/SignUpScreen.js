@@ -118,7 +118,7 @@ export default SignUpScreen = ({navigation}) => {
                     </Text>
                 </TouchableOpacity>
 
-                <StatusBar style="light" />
+                <StatusBar style="dark" />
             </ScrollView>
         </KeyboardAvoidingView>
     )
@@ -127,7 +127,7 @@ export default SignUpScreen = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.dark,
+        backgroundColor: colors.white,
     },
     errorMessage: {
         height: 72,

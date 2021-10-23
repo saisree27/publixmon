@@ -100,7 +100,7 @@ export default FeedScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.dark,
+        backgroundColor: colors.white,
     },
     map: {
         width: Dimensions.get('window').width,

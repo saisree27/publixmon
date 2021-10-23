@@ -122,7 +122,6 @@ export default LoginScreen = ({navigation}) => {
                         New around here? <Text style={uStyles.message, {color: colors.primary}}>Sign up.</Text>
                     </Text>
                 </TouchableOpacity>
-                <StatusBar style="light" />
             </ScrollView>
         </KeyboardAvoidingView>
     )
@@ -131,7 +130,7 @@ export default LoginScreen = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.dark,
+        backgroundColor: colors.white,
     },
     errorMessage: {
         height: 72,
