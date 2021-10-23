@@ -3,16 +3,18 @@ import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, Sc
 import {Feather, AntDesign} from "@expo/vector-icons";
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Constants from "expo-constants";
+import {StatusBar} from 'expo-status-bar';
 
 import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
 import {ImageUpload} from '../scripts/ImageUpload'
+import { apiBackend } from '../scripts/NCR';
 
 console.disableYellowBox = true;
 
 const { manifest } = Constants;
-const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
+const uri = `https://hackgt-8-publixmon.herokuapp.com/`;
 
 export default ProfileScreen = () => {
     const [user, setUser] = useContext(UserContext);
@@ -41,27 +43,37 @@ export default ProfileScreen = () => {
                 email: user.email,
             })
         });
+        // Get random item from NCR API
+        apiBackend().then((result) => {
+            console.log(result);    
+            // TODO: generate toys on backend
+            fetch(uri + "/styletransfer", {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    image: result,
+                    email: user.email,
+                })
+            }).then((response) => response.json())
+              .then((result) => {
+                  console.log(result.img_name);
+                  // maybe have a toy screen that presents the toy
+              })
+        })
 
-        // TODO: generate toys on backend
+
     }
 
     const checkIn = async () => {
+        // checkOut();
         const { status } = await BarCodeScanner.requestPermissionsAsync();
         if (status !== 'granted') {
             alert("Please give this app camera permissions to be able to check in to stores!")
         }
-        // add user to active users, update their store field
-        let res = await fetch(uri + "/adduser", {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: user.email,
-                store: store
-            })
-        });
+
         
 
     }
@@ -73,22 +85,38 @@ export default ProfileScreen = () => {
             setStore(place)
             setUser(state => ({...state, store: place}))
             alert(`Successfully checked in to ` + place + "!");
-            checkIn();
+            checkInOnline(place)
         }
     };
 
+    const checkInOnline = async (place) => {
+        // add user to active users, update their store field
+        let res = await fetch(uri + "/adduser", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+                store: place
+            })
+        });
+    }
+
     return (
         <View style={styles.container}>
+            <StatusBar style="dark" />
      
             {!scanned ? 
              <View style={{alignItems: "center", display: "flex", justifyContent: "center", padding: 16}}>
                 <Text style={[uStyles.body, {textAlign: "center"}]}>Scan the QR code at your store to check in.</Text>
                 <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => checkIn()}>
-                    <AntDesign name="qrcode" size={24} color={colors.white}/>
+                    <AntDesign name="qrcode" size={24} color={colors.dark}/>
                 </TouchableOpacity>
                 <BarCodeScanner
                     onBarCodeScanned={handleBarCodeScanned}
-                    style={{width: "75%", height: "50%", margin: 8, padding: 16, borderRadius: 12}}
+                    style={{width: "80%", height: "50%", margin: 16, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}}
                 />
             </View>
             :
@@ -117,6 +145,6 @@ export default ProfileScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.dark,
+        backgroundColor: colors.white,
     },
 });
