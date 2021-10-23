@@ -26,32 +26,40 @@ def home():
 @app.route('/adduser', methods = ['POST'])
 def add_user():
     email = request.json['email']
-    user = inactive_users.pop(email, {"location": None, "portfolio": [], "promos": [], "store": None})
+    store = request.json['store']
+    user = inactive_users.pop(email, {"location": None, "portfolio": [], "promos": [], "store": store})
     active_users[email] = user
-    return True
 
 @app.route('/removeuser', methods = ['POST'])
 def remove_user():
     email = request.json['email']
     user = active_users.pop(email, None)
+    user['store'] = None
     inactive_users[email] = user
-    return user
 
 @app.route('/updatelocation', methods = ['POST'])
 def update_location():
     email = request.json['email']
     location = request.json['location']
     active_users[email] = {"location": location}
-    return True
 
 @app.route('/getportfolio', methods = ['POST'])
 def get_portfolio():
     email = request.json['email']
     if email in active_users:
-        return active_users[email]['portfolio']
+        return {"res": active_users[email]['portfolio']}
     elif email in inactive_users:
-        return inactive_users[email]['portfolio'] 
-    return []
+        return {"res": inactive_users[email]['portfolio']}
+    return {"res": []}
+
+@app.route('/getcoupons', methods = ['POST'])
+def get_coupons():
+    email = request.json['email']
+    if email in active_users:
+        return {"res": active_users[email]['promos']}
+    elif email in inactive_users:
+        return {"res": inactive_users[email]['promos']}
+    return {"res": []}
 
 @app.route('/getlocations', methods = ['POST'])
 def get_locations():
@@ -61,6 +69,8 @@ def get_locations():
         if data['store'] == store:
             locations.append(data['location'])
     return {"res": locations}
+
+
 
 
 # TODO: ML routes (and corresponding user data routes to store toys and other info)
