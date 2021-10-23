@@ -7,7 +7,6 @@ import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
 import {ImageUpload} from '../scripts/ImageUpload'
-import SettingsModal from '../components/SettingsModal.js';
 console.disableYellowBox = true;
 
 export default ProfileScreen = () => {
@@ -64,7 +63,7 @@ export default ProfileScreen = () => {
                     <AntDesign name="qrcode" size={24} color={colors.white}/>
                 </TouchableOpacity>
                 <BarCodeScanner
-                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                    onBarCodeScanned={handleBarCodeScanned}
                     style={{width: "75%", height: "50%", margin: 8, padding: 16, borderRadius: 12}}
                 />
             </View>
