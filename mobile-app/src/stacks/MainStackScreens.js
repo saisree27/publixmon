@@ -4,6 +4,7 @@ import {Feather} from '@expo/vector-icons'
 
 import FeedScreen from '../screens/FeedScreen'
 import ProfileScreen from '../screens/ProfileScreen'
+import ExploreScreen from '../screens/ExploreScreen'
 import {uStyles, colors} from '../styles.js'
 
 export default MainStackScreens = () => {
@@ -18,20 +19,14 @@ export default MainStackScreens = () => {
         tabBarIcon: ({focused}) => {
             let iconName = "";
             switch (route.name) {
-                case "Feed":
-                    iconName = "home";
-                    break;
-                case "Explore":
+                case "People Nearby":
                     iconName = "compass";
                     break;
-                case "Post":
-                    iconName = "plus-circle";
+                case "Your Portfolio":
+                    iconName = "award";
                     break;
-                case "Game":
-                    iconName = "trending-up";
-                    break;
-                case "Profile":
-                    iconName = "user";
+                case "Check In and Out":
+                    iconName = "log-in";
                     break;
                 default:
                     iconName = "home";
@@ -40,14 +35,15 @@ export default MainStackScreens = () => {
             // if (route.name == "Post") {
             //     return <Feather name={iconName} size={48} color={focused ? colors.primary : colors.white}/>;
             // }
-            return <Feather name={iconName} size={24} color={focused ? colors.primary : colors.light} />;
+            return <Feather name={iconName} size={24} color={focused ? colors.primary : colors.dark} />;
         }
     }))
 
     return (
         <MainStack.Navigator tabBarOptions={tabBarOptions} screenOptions={screenOptions}>
-            <MainStack.Screen name="Feed" component={FeedScreen}/>
-            <MainStack.Screen name="Profile" component={ProfileScreen}/>
+            <MainStack.Screen name="Check In and Out" component={ProfileScreen}/>
+            <MainStack.Screen name="People Nearby" component={FeedScreen}/>
+            <MainStack.Screen name="Your Portfolio" component={ExploreScreen}/>
         </MainStack.Navigator>
     );
 }

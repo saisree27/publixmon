@@ -18,24 +18,21 @@ export default LoginScreen = ({navigation}) => {
         setLoading(true);
 
         try {
-            // await firebase.logIn(email, password);
+            await firebase.logIn(email, password);
 
-            // const uid = firebase.getCurrentUser().uid;
-            // const userInfo = await firebase.getUserInfo(uid);
-            // const emailVerified = firebase.getCurrentUser().emailVerified;
+            const uid = firebase.getCurrentUser().uid;
+            const emailVerified = firebase.getCurrentUser().emailVerified;
 
-            // if (!emailVerified) {
-            //     setErrorMessage("Your email is not verified. Check your inbox.");
-            // }
+            if (!emailVerified) {
+                setErrorMessage("Your email is not verified. Check your inbox.");
+            }
 
-            // todo: query server to make sure unique email
 
             setUser({
-                username: email,
-                // email: userInfo.email,
-                // uid,
+                email: email,
+                uid,
                 // profilePhotoUrl: userInfo.profilePhotoUrl,
-                isLoggedIn: true,
+                isLoggedIn: emailVerified,
             });
         } catch (error) {
             setErrorMessage(error.message);
@@ -66,7 +63,7 @@ export default LoginScreen = ({navigation}) => {
         <KeyboardAvoidingView behavior={"padding"} style={styles.container}>
             <ScrollView style={styles.container}>
                 <Text style={uStyles.header}>
-                    {'Welcome to Publixmon.'}
+                    {'Welcome back!'}
                 </Text>
 
                 <View style={styles.errorMessage}>
@@ -86,7 +83,7 @@ export default LoginScreen = ({navigation}) => {
                         ></TextInput>
                     </View>
 
-                    {/* <View style={{marginTop: 16}}>
+                    <View style={{marginTop: 16}}>
                         <Text style={uStyles.subheader}>Password</Text>
                         <TextInput 
                             style={uStyles.input} 
@@ -97,7 +94,7 @@ export default LoginScreen = ({navigation}) => {
                             onChangeText={password => setPassword(password.trim())}
                             value={password}
                         ></TextInput>
-                    </View> */}
+                    </View>
                 </View>
 
                 <TouchableOpacity style={uStyles.textButton} onPress={() => handleLogin()}>
@@ -108,7 +105,7 @@ export default LoginScreen = ({navigation}) => {
                     )}
                 </TouchableOpacity>
 
-                {/* <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => resetPassword()}>
+                <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => resetPassword()}>
                     <Text style={uStyles.message}>
                         Reset password.
                     </Text>
@@ -118,13 +115,13 @@ export default LoginScreen = ({navigation}) => {
                     <Text style={uStyles.message}>
                         Resend verification email.
                     </Text>
-                </TouchableOpacity> */}
-{/* 
+                </TouchableOpacity>
+
                 <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => navigation.navigate("SignUp")}>
                     <Text style={uStyles.message}>
                         New around here? <Text style={uStyles.message, {color: colors.primary}}>Sign up.</Text>
                     </Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 <StatusBar style="light" />
             </ScrollView>
         </KeyboardAvoidingView>

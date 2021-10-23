@@ -28,26 +28,20 @@ const Firebase = {
             // await Firebase.sendEmailVerification();
 
             const uid = Firebase.getCurrentUser().uid;
-            let profilePhotoUrl = "default";
+            // let profilePhotoUrl = "default";
 
-            console.log("hi 3")
-            console.log(uid)
-
-
-            await setDoc(doc(db, "users", uid), {
-                username: user.name,
-                email: user.email,
-                profilePhotoUrl: profilePhotoUrl
-            });
-            console.log("hi 2")
+            // await setDoc(doc(db, "users", uid), {
+            //     username: user.name,
+            //     email: user.email,
+            //     profilePhotoUrl: profilePhotoUrl
+            // });
 
             // if (user.profilePhoto) {
             //     profilePhotoUrl = await Firebase.uploadProfilePhoto(user.profilePhoto);
             // }
 
             delete user.password;
-            console.log("hi 1")
-            return {...user, profilePhotoUrl, uid};
+            return {...user, uid};
         } catch (error) {
             console.log("Error @createUser: ", error.message);
             throw error;
