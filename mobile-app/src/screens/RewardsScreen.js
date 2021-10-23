@@ -10,7 +10,8 @@ import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
 
 const { manifest } = Constants;
-const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
+// const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
+const uri = `https://hackgt-8-publixmon.herokuapp.com/`;
 
 export default RewardsScreen = () => {
 
