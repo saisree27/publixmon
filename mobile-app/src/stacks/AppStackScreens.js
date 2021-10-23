@@ -11,13 +11,13 @@ export default AppStackScreens = () => {
     const [user] = useContext(UserContext);
 
     return (
-        <AppStack.Navigator headerMode="none">
+        <AppStack.Navigator>
             {user.isLoggedIn === null ? (
-                <AppStack.Screen name="Loading" component={LoadingScreen}/>
+                <AppStack.Screen name="Loading" component={LoadingScreen} options={{headerShown: false}}/>
             ) : user.isLoggedIn ? (
-                <AppStack.Screen name="Main" component={MainStackScreens}/>
+                <AppStack.Screen name="Main" component={MainStackScreens} options={{headerShown: false}}/>
             ) :(
-                <AppStack.Screen name="Auth" component={AuthStackScreens}/>
+                <AppStack.Screen name="Auth" component={AuthStackScreens} options={{headerShown: false}}/>
             )}
         </AppStack.Navigator>
     );

@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, FlatList, Modal} from 'react-native'
-import {Feather} from "@expo/vector-icons";
+import {Feather, AntDesign} from "@expo/vector-icons";
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
@@ -12,87 +13,79 @@ console.disableYellowBox = true;
 export default ProfileScreen = () => {
     const [user, setUser] = useContext(UserContext);
     const firebase = useContext(FirebaseContext);
-    const [userData, setUserData] = useState();
-    const [onboardingVisible, setOnboardingVisible] = useState(false);
-    const [settingsVisible, setSettingsVisiible] = useState(false);
-    const [notificationsVisible, setNotificationsVisible] = useState(false);
-    const [unreadNotifications, setUnreadNotifications] = useState(false);
+
+    const [scanned, setScanned] = useState(false);
+    const [store, setStore] = useState("");
 
     useEffect(() => {
 
     }, []);
 
-    // const tempData = [
-    //     {id: "141415252", username: "Aritro", uid: "8301u410", imageUrl: "houar", link: "https://expo.io", caption: "uaohfauwf", type: "Volunteering", cause: "Environment", likes: 32, profileVisits: 10, shares: 2, comments: [{id: "23804u2309", username: "Rohan", uid: "owrhf", text: "oierjhe"},]},
-    //     {id: "1414152523", username: "Hane", uid: "238823", imageUrl: "ref", link: "", caption: "fefe", type: "Volunteering", cause: "Environment", likes: 33, profileVisits: 3, shares: 12, comments: [{id: "2049230942", username: "Rohan", uid: "owrhf", text: "oierjhe"},]},
-    // ];
 
-    const toggleOnboarding = () => {
-        setOnboardingVisible(!onboardingVisible);
-    }
-
-    const toggleNotifications = () => {
-        setNotificationsVisible(!notificationsVisible);
-    }
-
-    const toggleSettings = () => {
-        setSettingsVisiible(!settingsVisible);
-    }
-
-    const renderPost = ({item}) => {
-        return (
-            <PostCard post={item} isOwn/>
-        )
-    }
-
-    const addPostPhoto = async () => {
-        const uri = await ImageUpload.addPhoto();
-        if (uri) {
-            let url = await firebase.uploadProfilePhoto(uri);
+    const logOut = async () => {
+        const loggedOut = await firebase.logOut();
+        if (loggedOut) {
+            setUser(state => ({...state, isLoggedIn: false}))
         }
     }
 
+    const checkOut = async () => {
+        setScanned(false);
+        // TODO: remove user from active users, clear their store field
+
+        // TODO: generate toys on backend
+    }
+
+    const checkIn = async () => {
+        const { status } = await BarCodeScanner.requestPermissionsAsync();
+        if (status !== 'granted') {
+            alert("Please give this app camera permissions to be able to check in to stores!")
+        }
+        // TODO: add user to active users, update their store field
+
+    }
+
+    const handleBarCodeScanned = ({ type, data }) => {
+        setScanned(true);
+        if (data.includes("publixmon_store_id=")) {
+            let place = data.split("=")[1]
+            setStore(place)
+            alert(`Successfully checked in to ` + place + "!");
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <ScrollView style={{marginTop: 64, marginTop: "40%"}}>
-                {/* <TouchableOpacity style={[uStyles.pfpBubble, {alignSelf: "center"}]} onPress={() => addPostPhoto()}>
-                    <ImageBackground 
-                        style={uStyles.pfp}
-                        source={
-                            user.profilePhotoUrl === "default" ?
-                            require("../../assets/defaultProfilePhoto.png")
-                            : {uri: user.profilePhotoUrl}
-                        }
-                    />
-                </TouchableOpacity> */}
-                <Text style={[uStyles.header, {marginTop: 16}]}>{user.username}</Text>
+     
+            {!scanned ? 
+             <View style={{alignItems: "center", display: "flex", justifyContent: "center", padding: 16}}>
+                <Text style={[uStyles.body, {textAlign: "center"}]}>Scan the QR code at your store to check in.</Text>
+                <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => checkIn()}>
+                    <AntDesign name="qrcode" size={24} color={colors.white}/>
+                </TouchableOpacity>
+                <BarCodeScanner
+                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                    style={{width: "75%", height: "50%", margin: 8, padding: 16, borderRadius: 12}}
+                />
+            </View>
+            :
+            <View style={{alignItems: "center", display: "flex", justifyContent: "center", padding: 16}}>
+                <Text style={[uStyles.body, {textAlign: "center"}]}>Done shopping at {store}? </Text>
+                <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => checkOut()}>
+                    <Feather name="log-out" size={24} color={colors.white}/>
+                </TouchableOpacity>
 
-                {/* <Text style={[uStyles.title, {padding: 32, marginTop: 32}]}>...</Text> */}
-
-            </ScrollView>
-
-            <Modal
-                animationType="slide" 
-                visible={settingsVisible} 
-                onRequestClose={() => toggleSettings()}
-                transparent={true}
-            >
-                <SettingsModal close={() => toggleSettings()}/>
-            </Modal>
-
-            <View style={{alignItems: "center", display: "flex", justifyContent: "center", padding: 128}}>
-                <TouchableOpacity style={{alignItems: "right"}} onPress={() => toggleSettings()}>
-                    <Feather name="settings" size={24} color={colors.white}/>
+ 
+            </View>
+            }
+            <View style={{alignItems: "center", display: "flex", justifyContent: "center", padding: 16}}>
+                <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => logOut()}>
+                    <Text style={uStyles.message, {color: colors.primary}}>
+                        Log out
+                    </Text>
                 </TouchableOpacity>
             </View>
 
-
-            {/* <View style={uStyles.topBar}>
-                <Text style={[uStyles.title, {color: colors.primary, textAlign: 'left', marginTop: 32}]}>Profile</Text>
-                <View style={{flexDirection: "row"}}>
-         
-                </View>
-            </View> */}
         </View>
 
     );

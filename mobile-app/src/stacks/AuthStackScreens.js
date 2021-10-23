@@ -9,7 +9,7 @@ export default AuthStackScreens = () => {
 
     return (
         <AuthStack.Navigator headerMode="none">
-            {/* <AuthStack.Screen name="SignUp" component={SignUpScreen}/> */}
+            <AuthStack.Screen name="SignUp" component={SignUpScreen}/>
             <AuthStack.Screen name="LogIn" component={LoginScreen}/>
         </AuthStack.Navigator>
     );
