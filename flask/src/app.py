@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # LIVE APP DATA FOR PROOF-OF-CONCEPT
 # ------
-active_users = {}
+active_users = {"ragarwal84@gatech.edu": {"location": {"latitude": 33.7766764817335, "longitude": -84.396}, "portfolio": [], "promos": [], "store": "lala"}}
 inactive_users = {}
 
 
@@ -26,7 +26,7 @@ def home():
 @app.route('/adduser', methods = ['POST'])
 def add_user():
     email = request.json['email']
-    user = inactive_users.pop(email, {"location": None, "portfolio": [], "promos": []})
+    user = inactive_users.pop(email, {"location": None, "portfolio": [], "promos": [], "store": None})
     active_users[email] = user
     return True
 
@@ -52,6 +52,15 @@ def get_portfolio():
     elif email in inactive_users:
         return inactive_users[email]['portfolio'] 
     return []
+
+@app.route('/getlocations', methods = ['POST'])
+def get_locations():
+    store = request.json['store']
+    locations = []
+    for email, data in active_users.items():
+        if data['store'] == store:
+            locations.append(data['location'])
+    return {"res": locations}
 
 
 # TODO: ML routes (and corresponding user data routes to store toys and other info)
@@ -110,4 +119,4 @@ def add_coupon(email):
 
 # run the app
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=105)
+    app.run(host="0.0.0.0")

@@ -45,8 +45,8 @@ export default ProfileScreen = () => {
     }
 
     const handleBarCodeScanned = ({ type, data }) => {
-        setScanned(true);
         if (data.includes("publixmon_store_id=")) {
+            setScanned(true);
             let place = data.split("=")[1]
             setStore(place)
             alert(`Successfully checked in to ` + place + "!");
