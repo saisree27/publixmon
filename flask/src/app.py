@@ -70,6 +70,18 @@ def get_locations():
             locations.append(data['location'])
     return {"res": locations}
 
+@app.route('/deletecoupon', methods = ['POST'])
+def delete_coupon():
+    email = request.json['email']
+    code = request.json['code']
+    if email in active_users:
+        coupons = active_users[email]['coupons']
+        new_coupons = list(filter(lambda x: x['code'] != code, coupons))
+        active_users[email]['coupons'] = new_coupons
+    elif email in inactive_users:
+        coupons = inactive_users[email]['coupons']
+        new_coupons = list(filter(lambda x: x['code'] != code, coupons))
+        inactive_users[email]['coupons'] = new_coupons
 
 
 

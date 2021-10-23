@@ -19,10 +19,11 @@ export default RewardsScreen = () => {
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
-        // TODO: load coupons from server
+        loadCoupons();
     }, []);
 
     const loadCoupons = async () => {
+        // load coupons from server
         let res = await fetch(uri + "/getcoupons", {
             method: 'POST',
             headers: {
@@ -35,6 +36,7 @@ export default RewardsScreen = () => {
         });
         res = await res.json();
         res = res.res;
+        setCoupons(res);
     }
 
     const deleteCoupon = (index) => {
@@ -75,7 +77,19 @@ const CouponView = (props) => {
 
     const redeem = () => {
         setBarcodeVisible(true);
-        // TODO: delete coupon from server
+        // delete coupon from server
+        let res = await fetch(uri + "/deletecoupon", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+                code: props.coupon.code
+            })
+        });
+
     }
 
     return (
