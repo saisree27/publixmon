@@ -9,6 +9,8 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-
+style_transfer/.ipynb_checkpoints/
+__pycache__/
+style_transfer/models/
 # macOS
 .DS_Store
