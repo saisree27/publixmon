@@ -5,10 +5,10 @@ import time
 import os
 
 NAMES = {
-    "../models/eecv16/composition_vii.t7": "Composition VII on a ",
-    "../models/eecv16/la_muse.t7": "La Muse on a ",
-    "../models/eecv16/starry_night.t7": "Starry Night on a ",
-    "../models/eecv16/the_wave.t7": "The Wave on a ",
+    "../models/eccv16/composition_vii.t7": "Composition VII on a ",
+    "../models/eccv16/la_muse.t7": "La Muse on a ",
+    "../models/eccv16/starry_night.t7": "Starry Night on a ",
+    "../models/eccv16/the_wave.t7": "The Wave on a ",
     "../models/instance_norm/candy.t7": "Candy on a ",
     "../models/instance_norm/feathers.t7": "Feathers on a ",
     "../models/instance_norm/la_muse.t7": "La Muse on a ",
@@ -79,7 +79,7 @@ def resize_img(img, width=None, height=None, inter=cv.INTER_AREA):
     return resized
 
 def get_style_transfer(image):
-    list_names = [absoluteFilePaths("../models/")]
+    list_names = [absoluteFilePaths("./models/")]
     print(list_names)
     model_path = random.choice(list_names[0])
     
