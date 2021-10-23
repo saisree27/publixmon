@@ -2,10 +2,14 @@ import React, {useContext, useEffect, useState} from 'react'
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, Image, FlatList, Modal} from 'react-native'
 import {Feather} from "@expo/vector-icons";
 import Barcode from 'react-native-barcode-expo';
+import Constants from "expo-constants";
 
 import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
+
+const { manifest } = Constants;
+const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
 
 export default RewardsScreen = () => {
 
@@ -17,6 +21,21 @@ export default RewardsScreen = () => {
     useEffect(() => {
         // TODO: load coupons from server
     }, []);
+
+    const loadCoupons = async () => {
+        let res = await fetch(uri + "/getcoupons", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+            })
+        });
+        res = await res.json();
+        res = res.res;
+    }
 
     const deleteCoupon = (index) => {
         let couponList = coupons; // delete coupon from frontend

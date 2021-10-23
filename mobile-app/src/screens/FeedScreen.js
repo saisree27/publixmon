@@ -10,11 +10,10 @@ import Constants from "expo-constants";
 
 import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
-import checkIfFirstLaunch from '../scripts/CheckFirstLaunch';
+import { UserContext } from '../context/UserContext'
 
 const { manifest } = Constants;
 const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
-console.log(uri)
 
 export default FeedScreen = () => {
     const firebase = useContext(FirebaseContext);
@@ -22,6 +21,8 @@ export default FeedScreen = () => {
     const [location, setLocation] = useState();
     const [otherLocations, setOtherLocations] = useState([]);
     const [region, setRegion] = useState();
+    const [user, setUser] = useContext(UserContext);
+
 
     useEffect(() => {
         const _getLocationAsync = async () => {
@@ -43,8 +44,18 @@ export default FeedScreen = () => {
     useEffect(() => {
         setRegion({...location, latitudeDelta: 0.001, longitudeDelta: 0.001})
         
-     
-        // TODO: update user location on server
+        // update user location on server
+        let res = await fetch(uri + "/updatelocation", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+                location: location
+            })
+        });
     }, [location])
 
     const updateLocations = async () => {
@@ -56,7 +67,7 @@ export default FeedScreen = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                store: "lala"
+                store: user.store
             })
         });
         res = await res.json();
