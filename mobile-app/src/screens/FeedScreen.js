@@ -19,7 +19,7 @@ const uri = `https://hackgt-8-publixmon.herokuapp.com/`;
 export default FeedScreen = () => {
     const firebase = useContext(FirebaseContext);
     const mapRef = useRef()
-    const [location, setLocation] = useState();
+    const [location, setLocation] = useState({latitude: 0.0, longitude: 0.0});
     const [otherLocations, setOtherLocations] = useState([]);
     const [region, setRegion] = useState();
     const [user, setUser] = useContext(UserContext);
