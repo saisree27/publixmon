@@ -35,9 +35,9 @@ export default FeedScreen = () => {
         }
         _getLocationAsync()
 
-        const interval = setInterval(() => {
-            updateLocations();
-            updateUserLocation();
+        const interval = setInterval(async () => {
+            await updateLocations();
+            await updateUserLocation();
           }, 10000); // 10 seconds
         
           return () => clearInterval(interval);
@@ -60,6 +60,7 @@ export default FeedScreen = () => {
                 location: location
             })
         });
+        return
     }
 
     const updateLocations = async () => {
@@ -77,6 +78,7 @@ export default FeedScreen = () => {
         res = await res.json();
         res = res.res;
         setOtherLocations(res);
+        return
     }
  
 
