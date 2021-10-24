@@ -13,7 +13,7 @@ const { manifest } = Constants;
 // const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
 const uri = `https://hackgt-8-publixmon.herokuapp.com/`;
 
-export default RewardsScreen = () => {
+export default RewardsScreen = ({navigation}) => {
 
     let temp = [{name: "Free food for life!", code: "1234"}, {name: "Dish soap 50% off", code: "2314"}]
 
@@ -25,6 +25,13 @@ export default RewardsScreen = () => {
     useEffect(() => {
         loadCoupons();
     }, []);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+          loadCoupons();
+        });
+        return unsubscribe;
+    }, [navigation]);
 
     const loadCoupons = async () => {
         // load coupons from server
@@ -77,6 +84,8 @@ export default RewardsScreen = () => {
 }
 
 const CouponView = (props) => {
+    const [user, setUser] = useContext(UserContext);
+
     const [barcodeVisible, setBarcodeVisible] = useState(false);
 
     const redeem = async () => {
@@ -89,8 +98,8 @@ const CouponView = (props) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email: user.email,
-                code: props.coupon.code
+                email: user['email'],
+                code: props.coupon['code']
             })
         });
 
@@ -99,7 +108,7 @@ const CouponView = (props) => {
     return (
         <Reanimatable.View animation={"tada"} duration={500}>
             <TouchableOpacity style={{...uStyles.commentCard, backgroundColor: colors.light, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}} onPress={() => redeem()}>
-                <Text style={[uStyles.subheader, {padding: 4, textAlign: "center", color: colors.dark}]}>Redeem {props.coupon.name}</Text>
+                <Text style={[uStyles.subheader, {padding: 4, textAlign: "center", color: colors.dark}]}>{props.coupon.name}</Text>
             </TouchableOpacity>
         
             <Modal

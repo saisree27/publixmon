@@ -38,7 +38,7 @@ export default FeedScreen = () => {
         const interval = setInterval(async () => {
             if (user['store'] !== undefined || user['store'].length > 0) {
                 await updateLocations();
-                await updateUserLocation({latitude: location['latitude'], longitude: location['longitude']});
+                await updateUserLocation(location);
             }
           }, 10000); // 10 seconds
         
@@ -51,6 +51,7 @@ export default FeedScreen = () => {
     }, [location])
 
     const updateUserLocation = async (coords) => {
+        console.log(coords)
         let res = await fetch(uri + "/updatelocation", {
             method: 'POST',
             headers: {
