@@ -116,6 +116,11 @@ def transfer_style():
 
     new_toy = {"name": n, "image": new_img}
 
+    print("ACTIVE USERS: ")
+    print(active_users)
+    print("INACTIVE USERS: ")
+    print(inactive_users)
+
     if email in active_users:
         portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
         portfolio.append(new_toy)
