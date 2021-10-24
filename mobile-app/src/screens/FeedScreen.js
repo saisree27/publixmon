@@ -37,6 +37,7 @@ export default FeedScreen = () => {
 
         const interval = setInterval(() => {
             updateLocations();
+            updateUserLocation();
           }, 10000); // 10 seconds
         
           return () => clearInterval(interval);
@@ -44,9 +45,6 @@ export default FeedScreen = () => {
 
     useEffect(() => {
         setRegion({...location, latitudeDelta: 0.001, longitudeDelta: 0.001})
-        
-        // update user location on server
-       updateUserLocation();
 
     }, [location])
 
