@@ -76,7 +76,7 @@ export default ExploreScreen = ({navigation}) => {
             <FlatList 
                 style={{ padding: 16}}
                 data={portfolio}
-                renderItem={(toy) => <ToyView image={toy.item.image} name={toy.item.name}/>}
+                renderItem={(toy) => <ToyView image={toy.item.image} name={toy.item.name} loadPortfolio={() => load_portfolio()}/>}
                 keyExtractor={(item, index) => index}
                 showsVerticalScrollIndicator
                 numColumns={2}
@@ -106,7 +106,7 @@ const ToyView = (props) => {
                 visible={nftVisible}
                 onRequestClose={() => setNFTVisible(false)}
             >
-                <NFTModal name={props.name} image={props.image} close={() => {setNFTVisible(false)}}/>
+                <NFTModal name={props.name} image={props.image} close={() => {setNFTVisible(false); props.loadPortfolio()}}/>
             </Modal>
         </Reanimatable.View>
     )
