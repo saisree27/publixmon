@@ -158,7 +158,6 @@ const NFTModal = (props) => {
             <TextInput
                style={[uStyles.input, {marginHorizontal: 32}]} 
                autoCapitalize='none' 
-               autoCompleteType="text"
                autoCorrect={false}
                placeholder={"Enter your trading partner's code..."}
                onChangeText={text => setTradeText(text.trim())}
