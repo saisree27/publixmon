@@ -165,7 +165,7 @@ def transfer_style():
         new_img = str(st_image)[2:-1]
         n = name +  url[url.rindex("/") + 1:url.index(".jp")]
 
-        new_toy = {"name": n, "image": new_img}
+        new_toy = {"name": n, "image": new_img, "id": new_img[:10]}
 
         if email in active_users:
             portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
@@ -192,6 +192,76 @@ def transfer_style():
 
 # TODO: NCR API routes (and corresponding user data routes)
 
+
+
+@app.route('/swap', methods = ['POST'])
+def swap():
+    user_email = request.json["user"]
+    email_to_swap = request.json["email"]
+    id_to_send = request.json["lose"]
+    id_to_receive = request.json["get"]
+    
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
+    user_active = False
+    other_active = False
+    user_send_loc = -1
+    other_send_loc = -1
+
+    if user_email in active_users:
+        user_active = True
+        for i in range(len(active_users[user_email]["portfolio"])):
+            if active_users[user_email]["portfolio"][i]["id"] == id_to_send:
+                user_send_loc = i
+    elif user_email in inactive_users:
+        for i in range(len(inactive_users[user_email]["portfolio"])):
+            if inactive_users[user_email]["portfolio"][i]["id"] == id_to_send:
+                user_send_loc = i
+    else:
+        return jsonify(
+            res="Invalid user email"
+        )
+
+    if user_send_loc == -1:
+        return jsonify(
+            res="Invalid send id"
+        )
+
+    if email_to_swap in active_users:
+        other_active = True
+        for i in range(len(active_users[email_to_swap]["portfolio"])):
+            if active_users[email_to_swap]["portfolio"][i]["id"] == id_to_receive:
+                other_send_loc = i
+    elif email_to_swap in inactive_users:
+        for i in range(len(inactive_users[email_to_swap]["portfolio"])):
+            if inactive_users[email_to_swap]["portfolio"][i]["id"] == id_to_receive:
+                other_send_loc = i
+    else:
+        return jsonify(
+            res="Invalid other email"
+        )
+
+    if other_send_loc == -1:
+        return jsonify(
+            res="Invalid other id"
+        )
+
+    if user_active and other_active:
+        active_users[user_email]["porfolio"][user_send_loc], active_users[email_to_swap]["portfolio"][other_send_loc] = active_users[email_to_swap]["portfolio"][other_send_loc], active_users[user_email]["porfolio"][user_send_loc]
+    elif user_active and not other_active:
+        active_users[user_email]["porfolio"][user_send_loc], inactive_users[email_to_swap]["portfolio"][other_send_loc] = inactive_users[email_to_swap]["portfolio"][other_send_loc], active_users[user_email]["porfolio"][user_send_loc]
+    elif not user_active and other_active:
+        inactive_users[user_email]["porfolio"][user_send_loc], active_users[email_to_swap]["portfolio"][other_send_loc] = active_users[email_to_swap]["portfolio"][other_send_loc], inactive_users[user_email]["porfolio"][user_send_loc]
+    else:
+        inactive_users[user_email]["porfolio"][user_send_loc], inactive_users[email_to_swap]["portfolio"][other_send_loc] = inactive_users[email_to_swap]["portfolio"][other_send_loc], inactive_users[user_email]["porfolio"][user_send_loc]
+    
+    set_inactive_users(inactive_users)
+    set_active_users(active_users)
+
+    return jsonify(
+        res="success"
+    )
 # helper functions
 
 def add_coupon(email):
