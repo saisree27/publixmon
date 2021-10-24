@@ -76,7 +76,7 @@ export default ExploreScreen = ({navigation}) => {
             <FlatList 
                 style={{ padding: 16}}
                 data={portfolio}
-                renderItem={(toy) => <ToyView image={toy.item.image} name={toy.item.name} loadPortfolio={() => load_portfolio()}/>}
+                renderItem={(toy) => <ToyView image={toy.item.image} name={toy.item.name} id={toy.item.id} loadPortfolio={() => load_portfolio()}/>}
                 keyExtractor={(item, index) => index}
                 showsVerticalScrollIndicator
                 numColumns={2}
@@ -106,7 +106,7 @@ const ToyView = (props) => {
                 visible={nftVisible}
                 onRequestClose={() => setNFTVisible(false)}
             >
-                <NFTModal name={props.name} image={props.image} close={() => {setNFTVisible(false); props.loadPortfolio()}}/>
+                <NFTModal name={props.name} image={props.image} id={props.id} close={() => {setNFTVisible(false); props.loadPortfolio()}}/>
             </Modal>
         </Reanimatable.View>
     )
@@ -118,11 +118,29 @@ const NFTModal = (props) => {
 
     const [begun, setBegun] = useState(false);
 
-    const trade = () => {
-        console.log('trading virtual stuff lol')
+    const trade = async () => {
         if (!begun && tradeText.length > 0 && partnerEmail.length > 0) {
             setBegun(true);
-            // TODO: request trade
+            // request trade
+            let res = await fetch(uri + "/swap", {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user: user.email,
+                    email: partnerEmail,
+                    lose: props.id, 
+                    get: tradeText
+                })
+            });
+            res = await res.json();
+            res = res.res;
+            console.log(res);
+            if (res !== "success") {
+                alert(res);
+            }
         }
     }
 
@@ -133,7 +151,7 @@ const NFTModal = (props) => {
             </TouchableOpacity>
             <Text style={[uStyles.body, {textAlign: "center", color: colors.dark}]}>Trade "{props.name}"?</Text>
             <Text style={{...uStyles.message, margin: 16, textAlign: "center"}}>Enter the code for the item you're receiving or have the person you're trading with enter your code.</Text>
-            <Text style={[uStyles.header, {textAlign: "center", color: colors.dark, marginTop: 8}]}>{props.image.substring(0, 10)}</Text>
+            <Text style={[uStyles.header, {textAlign: "center", color: colors.dark, marginTop: 8}]}>{props.id}</Text>
             <TouchableOpacity onPress={() => trade()}>
                 <Ionicons name="swap-vertical" size={42} color={colors.primary} style={{alignSelf: "center", margin: 16}}/>
             </TouchableOpacity>
