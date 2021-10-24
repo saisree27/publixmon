@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, Image, FlatList, Modal} from 'react-native'
-import {Feather} from "@expo/vector-icons";
+import {Feather, Ionicons} from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Reanimatable from 'react-native-animatable';
 
@@ -76,7 +76,7 @@ export default ExploreScreen = ({navigation}) => {
             <FlatList 
                 style={{ padding: 16}}
                 data={portfolio}
-                renderItem={(toy) => <ToyView image={toy.item.image} name={toy.item.name}/>}
+                renderItem={(toy) => <ToyView image={toy.item.image} name={toy.item.name} id={toy.item.id} loadPortfolio={() => load_portfolio()}/>}
                 keyExtractor={(item, index) => index}
                 showsVerticalScrollIndicator
                 numColumns={2}
@@ -106,21 +106,72 @@ const ToyView = (props) => {
                 visible={nftVisible}
                 onRequestClose={() => setNFTVisible(false)}
             >
-                <NFTModal name={props.name} close={() => {setNFTVisible(false)}}/>
+                <NFTModal name={props.name} image={props.image} id={props.id} close={() => {setNFTVisible(false); props.loadPortfolio()}}/>
             </Modal>
         </Reanimatable.View>
     )
 }
 
 const NFTModal = (props) => {
+    const [tradeText, setTradeText] = useState("");
+    const [partnerEmail, setPartnerEmail] = useState("");
+
+    const [begun, setBegun] = useState(false);
+
+    const trade = async () => {
+        if (!begun && tradeText.length > 0 && partnerEmail.length > 0) {
+            setBegun(true);
+            // request trade
+            let res = await fetch(uri + "/swap", {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user: user.email,
+                    email: partnerEmail,
+                    lose: props.id, 
+                    get: tradeText
+                })
+            });
+            res = await res.json();
+            res = res.res;
+            console.log(res);
+            if (res !== "success") {
+                alert(res);
+            }
+        }
+    }
 
     return (
         <View style={uStyles.modal}>
             <TouchableOpacity onPress={() => props.close()} style={{alignSelf: 'flex-end', marginRight: 12, marginTop: 12}}>
                 <Feather name="x" size={32} color={colors.black}/>
             </TouchableOpacity>
-            <Text style={[uStyles.body, {textAlign: "center", color: colors.dark}]}>{props.name}</Text>
-            
+            <Text style={[uStyles.body, {textAlign: "center", color: colors.dark}]}>Trade "{props.name}"?</Text>
+            <Text style={{...uStyles.message, margin: 16, textAlign: "center"}}>Enter the code for the item you're receiving or have the person you're trading with enter your code.</Text>
+            <Text style={[uStyles.header, {textAlign: "center", color: colors.dark, marginTop: 8}]}>{props.id}</Text>
+            <TouchableOpacity onPress={() => trade()}>
+                <Ionicons name="swap-vertical" size={42} color={colors.primary} style={{alignSelf: "center", margin: 16}}/>
+            </TouchableOpacity>
+            <TextInput
+               style={[uStyles.input, {marginHorizontal: 32}]} 
+               autoCapitalize='none' 
+               autoCorrect={false}
+               placeholder={"Enter your trading partner's code..."}
+               onChangeText={text => setTradeText(text.trim())}
+               value={tradeText}
+            />
+            <TextInput
+               style={[uStyles.input, {marginHorizontal: 32}]} 
+               autoCapitalize='none' 
+               autoCompleteType="email"
+               autoCorrect={false}
+               placeholder={"Enter your trading partner's email..."}
+               onChangeText={text => setPartnerEmail(text.trim())}
+               value={partnerEmail}
+            />
         </View>
     )
 }

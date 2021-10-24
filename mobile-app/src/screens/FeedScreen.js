@@ -31,13 +31,15 @@ export default FeedScreen = () => {
             if (status !== 'granted') {
                 alert("Please give this app location permissions to be able to meet and trade with others!")
             }
-            let locations = await Location.watchPositionAsync({ accuracy: Location.Accuracy.High, timeInterval: 10000, distanceInterval: 1 }, (loc) => setLocation(loc.coords));           
+            let locations = await Location.watchPositionAsync({ accuracy: Location.Accuracy.High, timeInterval: 10000, distanceInterval: 1 }, (loc) => setLocation(loc.coords));   
         }
         _getLocationAsync()
 
         const interval = setInterval(async () => {
-            await updateLocations();
-            await updateUserLocation();
+            if (user['store'] !== undefined || user['store'].length > 0) {
+                await updateLocations();
+                await updateUserLocation(location);
+            }
           }, 10000); // 10 seconds
         
           return () => clearInterval(interval);
@@ -48,7 +50,8 @@ export default FeedScreen = () => {
 
     }, [location])
 
-    const updateUserLocation = async () => {
+    const updateUserLocation = async (coords) => {
+        console.log(coords)
         let res = await fetch(uri + "/updatelocation", {
             method: 'POST',
             headers: {
@@ -57,14 +60,13 @@ export default FeedScreen = () => {
             },
             body: JSON.stringify({
                 email: user.email,
-                location: location
+                location: coords
             })
         });
         return
     }
 
     const updateLocations = async () => {
-        console.log("OTHER USER LOCATIONS UPDATE")
         // get locations of other users in same store from server
         let res = await fetch(uri + "/getlocations", {
             method: 'POST',
@@ -73,7 +75,7 @@ export default FeedScreen = () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                store: user.store
+                store: user['store']
             })
         });
         res = await res.json();
