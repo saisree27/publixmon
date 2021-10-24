@@ -42,3 +42,6 @@ We learned several new technologies and how to integrate them together into one 
 ## What's next for Publixmon
 Next is to take the app from a proof-of-concept to a production-ready app, fleshing out features like location mapping and NFT trading, partnering with retailers to implement features such as real purchase history and promotions, and expanding the uniqueness and value of the collectibles we offer. We also want to experiment with better algorithms for rewarding users with collectibles and promotions.
 
+## More on the project
+See a demo on [YouTube](https://youtu.be/Ox_4EWKmk7k) and our [DevPost](https://devpost.com/software/publixmon) for more info.
+
