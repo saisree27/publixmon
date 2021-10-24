@@ -51,8 +51,7 @@ def add_user():
     print(user)
     active_users[email] = user
     print(active_users)
-    return {"res": True}
-
+    
     set_active_users(active_users)
     set_inactive_users(inactive_users)
 
