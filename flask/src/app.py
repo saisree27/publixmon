@@ -248,13 +248,13 @@ def swap():
         )
 
     if user_active and other_active:
-        active_users[user_email]["porfolio"][user_send_loc], active_users[email_to_swap]["portfolio"][other_send_loc] = active_users[email_to_swap]["portfolio"][other_send_loc], active_users[user_email]["porfolio"][user_send_loc]
+        active_users[user_email]["portfolio"][user_send_loc], active_users[email_to_swap]["portfolio"][other_send_loc] = active_users[email_to_swap]["portfolio"][other_send_loc], active_users[user_email]["portfolio"][user_send_loc]
     elif user_active and not other_active:
-        active_users[user_email]["porfolio"][user_send_loc], inactive_users[email_to_swap]["portfolio"][other_send_loc] = inactive_users[email_to_swap]["portfolio"][other_send_loc], active_users[user_email]["porfolio"][user_send_loc]
+        active_users[user_email]["portfolio"][user_send_loc], inactive_users[email_to_swap]["portfolio"][other_send_loc] = inactive_users[email_to_swap]["portfolio"][other_send_loc], active_users[user_email]["portfolio"][user_send_loc]
     elif not user_active and other_active:
-        inactive_users[user_email]["porfolio"][user_send_loc], active_users[email_to_swap]["portfolio"][other_send_loc] = active_users[email_to_swap]["portfolio"][other_send_loc], inactive_users[user_email]["porfolio"][user_send_loc]
+        inactive_users[user_email]["portfolio"][user_send_loc], active_users[email_to_swap]["portfolio"][other_send_loc] = active_users[email_to_swap]["portfolio"][other_send_loc], inactive_users[user_email]["portfolio"][user_send_loc]
     else:
-        inactive_users[user_email]["porfolio"][user_send_loc], inactive_users[email_to_swap]["portfolio"][other_send_loc] = inactive_users[email_to_swap]["portfolio"][other_send_loc], inactive_users[user_email]["porfolio"][user_send_loc]
+        inactive_users[user_email]["portfolio"][user_send_loc], inactive_users[email_to_swap]["portfolio"][other_send_loc] = inactive_users[email_to_swap]["portfolio"][other_send_loc], inactive_users[user_email]["portfolio"][user_send_loc]
     
     set_inactive_users(inactive_users)
     set_active_users(active_users)
