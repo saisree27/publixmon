@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react'
-import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, FlatList, Modal} from 'react-native'
+import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, FlatList, ActivityIndicator} from 'react-native'
 import {Feather, AntDesign} from "@expo/vector-icons";
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Constants from "expo-constants";
@@ -22,7 +22,7 @@ export default ProfileScreen = () => {
 
     const [scanned, setScanned] = useState(false);
     const [store, setStore] = useState("");
-    const [update, setUpdate] = useState("");
+    const [update, setUpdate] = useState(null);
 
     const logOut = async () => {
         const loggedOut = await firebase.logOut();
@@ -137,14 +137,12 @@ export default ProfileScreen = () => {
             </View>
             }
             {update !== null ?
-                <View>
-                {update.length > 0 ? 
-                    <View style={{...uStyles.commentCard, backgroundColor: colors.light, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}}>
-                        <Text style={[uStyles.subheader, {textAlign: "center", padding: 16}]}>{update}</Text>
-                    </View>
-                :
+                <View style={{...uStyles.commentCard, backgroundColor: colors.light, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}}>
+                    {update.length == 0 ? 
                     <ActivityIndicator size="small" color={colors.dark}/>
-                }
+                        :
+                    <Text style={[uStyles.subheader, {textAlign: "center", padding: 16}]}>{update}</Text>
+                    }
                 </View>
             :  
                 null
