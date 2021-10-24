@@ -79,7 +79,7 @@ def update_location():
 
     email = request.json['email']
     location = request.json['location']
-    active_users[email] = {"location": location}
+    active_users[email]['location'] = location
 
     set_active_users(active_users)
     set_inactive_users(inactive_users)
