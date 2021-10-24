@@ -54,6 +54,10 @@ def update_location():
 @app.route('/getportfolio', methods = ['POST'])
 def get_portfolio():
     email = request.json['email']
+    print("GET PORTFOLIO")
+    print(email)
+    print(active_users)
+    print(inactive_users)
     if email in active_users:
         return {"res": active_users[email]['portfolio']}
     elif email in inactive_users:
