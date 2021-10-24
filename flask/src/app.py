@@ -51,7 +51,7 @@ def add_user():
     print(user)
     active_users[email] = user
     print(active_users)
-
+    
     set_active_users(active_users)
     set_inactive_users(inactive_users)
 
@@ -193,6 +193,8 @@ def transfer_style():
         set_active_users(active_users)
         set_inactive_users(inactive_users)
 
+        add_coupon(email)
+
         return jsonify(
             style_transfer=new_img,
             img_name=n
@@ -202,26 +204,6 @@ def transfer_style():
 # TODO: NCR API routes (and corresponding user data routes)
 
 # helper functions
-def add_toy(email, toy):
-    active_users = get_active_users()
-    inactive_users = get_inactive_users()
-
-    if email in active_users:
-        portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
-        portfolio.append(toy)
-        active_users[email]['portfolio'] = portfolio
-    elif email in inactive_users:
-        portfolio = inactive_users[email]['portfolio']
-        portfolio.append(toy)
-        inactive_users[email]['portfolio'] = portfolio
-    else:
-        return False
-
-    set_active_users(active_users)
-    set_inactive_users(inactive_users)
-
-    add_coupon(email)
-    return True
 
 def add_coupon(email):
     active_users = get_active_users()

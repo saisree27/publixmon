@@ -22,6 +22,7 @@ export default ProfileScreen = () => {
 
     const [scanned, setScanned] = useState(false);
     const [store, setStore] = useState("");
+    const [update, setUpdate] = useState("");
 
     const logOut = async () => {
         const loggedOut = await firebase.logOut();
@@ -46,7 +47,7 @@ export default ProfileScreen = () => {
         // Get random item from NCR API
         apiBackend().then((result) => {
             console.log(result);    
-            // TODO: generate toys on backend
+            // generate toys on backend
             fetch(uri + "/styletransfer", {
                 method: 'POST',
                 headers: {
@@ -60,7 +61,11 @@ export default ProfileScreen = () => {
             }).then((response) => response.json())
               .then((result) => {
                   console.log(result.img_name);
-                  // maybe have a toy screen that presents the toy
+                  if (result.img_name === "NONE") {
+                    setUpdate("You didn't get a toy this time...")
+                  } else {
+                    setUpdate("You got a new toy! Check your portfolio!")
+                  }
               })
         })
 
@@ -68,7 +73,7 @@ export default ProfileScreen = () => {
     }
 
     const checkIn = async () => {
-        // checkOut();
+        setUpdate("")
         const { status } = await BarCodeScanner.requestPermissionsAsync();
         if (status !== 'granted') {
             alert("Please give this app camera permissions to be able to check in to stores!")
@@ -79,6 +84,7 @@ export default ProfileScreen = () => {
     }
 
     const handleBarCodeScanned = ({ type, data }) => {
+        setUpdate("")
         if (data.includes("publixmon_store_id=")) {
             setScanned(true);
             let place = data.split("=")[1]
@@ -129,6 +135,14 @@ export default ProfileScreen = () => {
  
             </View>
             }
+            {update.length > 0 ?
+                <View style={{...uStyles.commentCard, backgroundColor: colors.light, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}}>
+                    <Text style={[uStyles.subheader, {textAlign: "center", padding: 16}]}>{update}</Text>
+                </View>
+            :  
+                null
+            }
+
             <View style={{alignItems: "center", display: "flex", justifyContent: "center", padding: 16}}>
                 <TouchableOpacity style={{alignSelf: "center", marginTop: 32}} onPress={() => logOut()}>
                     <Text style={uStyles.message, {color: colors.primary}}>
