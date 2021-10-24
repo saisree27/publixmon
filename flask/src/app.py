@@ -25,17 +25,25 @@ def home():
 # user data routes
 @app.route('/adduser', methods = ['POST'])
 def add_user():
+    print("Adduser:")
     email = request.json['email']
     store = request.json['store']
+    print(email, store)
     user = inactive_users.pop(email, {"location": None, "portfolio": [], "promos": [], "store": store})
+    print(user)
     active_users[email] = user
+    print(active_users)
 
 @app.route('/removeuser', methods = ['POST'])
 def remove_user():
+    print("removeuser:")
     email = request.json['email']
+    print(email)
     user = active_users.pop(email, {"location": None, "portfolio": [], "promos": [], "store": None})
+    print(user)
     user['store'] = None
     inactive_users[email] = user
+    print(inactive_users)
 
 @app.route('/updatelocation', methods = ['POST'])
 def update_location():
