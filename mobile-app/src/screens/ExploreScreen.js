@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, Image, FlatList, Modal} from 'react-native'
-import {Feather} from "@expo/vector-icons";
+import {Feather, Ionicons} from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Reanimatable from 'react-native-animatable';
 
@@ -120,7 +120,10 @@ const NFTModal = (props) => {
 
     const trade = () => {
         console.log('trading virtual stuff lol')
-        setBegun(true);
+        if (!begun && tradeText.length > 0 && partnerEmail.length > 0) {
+            setBegun(true);
+            // TODO: request trade
+        }
     }
 
     return (
@@ -132,7 +135,7 @@ const NFTModal = (props) => {
             <Text style={{...uStyles.message, margin: 16, textAlign: "center"}}>Enter the code for the item you're receiving or have the person you're trading with enter your code.</Text>
             <Text style={[uStyles.header, {textAlign: "center", color: colors.dark, marginTop: 8}]}>{props.image.substring(0, 10)}</Text>
             <TouchableOpacity onPress={() => trade()}>
-                <Feather name="refresh-ccw" size={42} color={colors.primary} style={{alignSelf: "center", margin: 16}}/>
+                <Ionicons name="swap-vertical" size={42} color={colors.primary} style={{alignSelf: "center", margin: 16}}/>
             </TouchableOpacity>
             <TextInput
                style={[uStyles.input, {marginHorizontal: 32}]} 
