@@ -199,15 +199,15 @@ def add_coupon(email):
     inactive_users = get_inactive_users()
 
     num = random.randint(0, 9)
-    if num < 4:
+    if num < 8:
         # add coupon
         coupon_choices = [{"name": "5% off next purchase!", "code": "1234"}, {"name": "Buy 1 get 1 free for any box of Kellogg's cereal!", "code": "1243"}]
         choice = random.randint(0, len(coupon_choices) - 1)
         coupon = coupon_choices[choice]
         if email in active_users:
-            active_users[email]['coupons'].append(coupon)
+            active_users[email]['promos'].append(coupon)
         elif email in inactive_users:
-            inactive_users[email]['coupons'].append(coupon)
+            inactive_users[email]['promos'].append(coupon)
 
     set_active_users(active_users)
     set_inactive_users(inactive_users)
