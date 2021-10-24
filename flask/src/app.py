@@ -33,6 +33,7 @@ def add_user():
     print(user)
     active_users[email] = user
     print(active_users)
+    return {"res": True}
 
 @app.route('/removeuser', methods = ['POST'])
 def remove_user():

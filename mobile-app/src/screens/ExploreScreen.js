@@ -59,7 +59,10 @@ export default ExploreScreen = () => {
             {/* <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>{user.email.toLowerCase()}</Text> */}
             <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>Your collection is worth <Text style={{color: colors.primary}}>{score} points!</Text></Text>
             <Text style={[uStyles.message, {textAlign: "center", marginBottom: 16, paddingHorizontal: 64}]}>A larger, more varied collection gets you more points and more rewards!</Text>
-
+           
+            <TouchableOpacity style={{alignSelf: "center", padding: 8, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}} onPress={() => load_portfolio()}>
+                <Feather name="refresh-cw" size={24} color={colors.black}/>
+            </TouchableOpacity>
 
 
             <FlatList 
@@ -86,8 +89,8 @@ const ToyView = (props) => {
     return (
         <Reanimatable.View animation={"tada"} duration={500}>
             <TouchableOpacity style={{padding: 8, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}} onPress={() => showToy()}>
-                <Text style={[uStyles.subheader, {padding: 4, textAlign: "center"}]}>{props.name}</Text>
-                <Image style={{width: 150, height: 150, resizeMode: "contain", borderRadius: 8}} source={{uri: props.image}}/>
+                <Text style={[uStyles.message, {padding: 4, textAlign: "center"}]}>{props.name}</Text>
+                <Image style={{width: 150, height: 150, resizeMode: "contain", borderRadius: 8}} source={{uri: 'data:image/png;base64,' + props.image}}/>
             </TouchableOpacity>
             <Modal
                 animationType="slide"
