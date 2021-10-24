@@ -7,13 +7,27 @@ import cv2 as cv
 from style_transfer import data_uri_to_cv2_img, get_style_transfer
 import requests
 from urllib.request import urlopen
+import json
 
 app = Flask(__name__)
 
 # LIVE APP DATA FOR PROOF-OF-CONCEPT
 # ------
-active_users = {"ragarwal84@gatech.edu": {"location": {"latitude": 33.7766764817335, "longitude": -84.396}, "portfolio": [], "promos": [], "store": "lala"}}
-inactive_users = {}
+def get_active_users():
+    with open('active_users.txt') as f:
+        return json.load(f)
+
+def get_inactive_users():
+    with open('inactive_users.txt') as f:
+        return json.load(f)
+
+def set_active_users(users_dict):
+    with open('active_users.txt', 'w') as f:
+        json.dump(users_dict, f)
+
+def set_inactive_users(users_dict):
+    with open('inactive_users.txt', 'w') as f:
+        json.dump(users_dict, f)
 
 
 # ------
@@ -25,6 +39,9 @@ def home():
 # user data routes
 @app.route('/adduser', methods = ['POST'])
 def add_user():
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     print("Adduser:")
     email = request.json['email']
     store = request.json['store']
@@ -34,8 +51,14 @@ def add_user():
     active_users[email] = user
     print(active_users)
 
+    set_active_users(active_users)
+    set_inactive_users(inactive_users)
+
 @app.route('/removeuser', methods = ['POST'])
 def remove_user():
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     print("removeuser:")
     email = request.json['email']
     print(email)
@@ -45,19 +68,34 @@ def remove_user():
     inactive_users[email] = user
     print(inactive_users)
 
+    set_active_users(active_users)
+    set_inactive_users(inactive_users)
+
 @app.route('/updatelocation', methods = ['POST'])
 def update_location():
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     email = request.json['email']
     location = request.json['location']
     active_users[email] = {"location": location}
 
+    set_active_users(active_users)
+    set_inactive_users(inactive_users)
+
 @app.route('/getportfolio', methods = ['POST'])
 def get_portfolio():
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     email = request.json['email']
     print("GET PORTFOLIO")
     print(email)
     print(active_users)
     print(inactive_users)
+
+    set_active_users(active_users)
+    set_inactive_users(inactive_users)
     if email in active_users:
         return {"res": active_users[email]['portfolio']}
     elif email in inactive_users:
@@ -66,6 +104,9 @@ def get_portfolio():
 
 @app.route('/getcoupons', methods = ['POST'])
 def get_coupons():
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     email = request.json['email']
     if email in active_users:
         return {"res": active_users[email]['promos']}
@@ -75,15 +116,22 @@ def get_coupons():
 
 @app.route('/getlocations', methods = ['POST'])
 def get_locations():
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     store = request.json['store']
     locations = []
     for email, data in active_users.items():
         if data['store'] == store:
             locations.append(data['location'])
+    
     return {"res": locations}
 
 @app.route('/deletecoupon', methods = ['POST'])
 def delete_coupon():
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     email = request.json['email']
     code = request.json['code']
     if email in active_users:
@@ -95,11 +143,16 @@ def delete_coupon():
         new_coupons = list(filter(lambda x: x['code'] != code, coupons))
         inactive_users[email]['coupons'] = new_coupons
 
+    set_active_users(active_users)
+    set_inactive_users(inactive_users)
 
 
 # TODO: ML routes (and corresponding user data routes to store toys and other info)
 @app.route('/styletransfer', methods = ['POST'])
 def transfer_style():
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     url = request.json["image"]
     email = request.json["email"]
 
@@ -135,6 +188,9 @@ def transfer_style():
     else:
         print("This doesn't make sense. The email does not exist!")
     
+    set_active_users(active_users)
+    set_inactive_users(inactive_users)
+
     return jsonify(
         style_transfer=new_img,
         img_name=n
@@ -145,6 +201,9 @@ def transfer_style():
 
 # helper functions
 def add_toy(email, toy):
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     if email in active_users:
         portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
         portfolio.append(toy)
@@ -156,10 +215,16 @@ def add_toy(email, toy):
     else:
         return False
 
+    set_active_users(active_users)
+    set_inactive_users(inactive_users)
+
     add_coupon(email)
     return True
 
 def add_coupon(email):
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
     num = random.randint(0, 9)
     if num == 0:
         # add coupon
@@ -171,6 +236,8 @@ def add_coupon(email):
         elif email in inactive_users:
             inactive_users[email]['coupons'].append(coupon)
 
+    set_active_users(active_users)
+    set_inactive_users(inactive_users)
 
 
 # run the app
