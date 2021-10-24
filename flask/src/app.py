@@ -129,13 +129,13 @@ def delete_coupon():
     email = request.json['email']
     code = request.json['code']
     if email in active_users:
-        coupons = active_users[email]['coupons']
+        coupons = active_users[email]['promos']
         new_coupons = list(filter(lambda x: x['code'] != code, coupons))
-        active_users[email]['coupons'] = new_coupons
+        active_users[email]['promos'] = new_coupons
     elif email in inactive_users:
-        coupons = inactive_users[email]['coupons']
+        coupons = inactive_users[email]['promos']
         new_coupons = list(filter(lambda x: x['code'] != code, coupons))
-        inactive_users[email]['coupons'] = new_coupons
+        inactive_users[email]['promos'] = new_coupons
 
     set_active_users(active_users)
     set_inactive_users(inactive_users)
@@ -165,7 +165,7 @@ def transfer_style():
         new_img = str(st_image)[2:-1]
         n = name +  url[url.rindex("/") + 1:url.index(".jp")]
 
-        new_toy = {"name": n, "image": new_img}
+        new_toy = {"name": n, "image": new_img, "id": new_img[:10]}
 
         if email in active_users:
             portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
@@ -192,6 +192,76 @@ def transfer_style():
 
 # TODO: NCR API routes (and corresponding user data routes)
 
+
+
+@app.route('/swap', methods = ['POST'])
+def swap():
+    user_email = request.json["user"]
+    email_to_swap = request.json["email"]
+    id_to_send = request.json["lose"]
+    id_to_receive = request.json["get"]
+    
+    active_users = get_active_users()
+    inactive_users = get_inactive_users()
+
+    user_active = False
+    other_active = False
+    user_send_loc = -1
+    other_send_loc = -1
+
+    if user_email in active_users:
+        user_active = True
+        for i in range(len(active_users[user_email]["portfolio"])):
+            if active_users[user_email]["portfolio"][i]["id"] == id_to_send:
+                user_send_loc = i
+    elif user_email in inactive_users:
+        for i in range(len(inactive_users[user_email]["portfolio"])):
+            if inactive_users[user_email]["portfolio"][i]["id"] == id_to_send:
+                user_send_loc = i
+    else:
+        return jsonify(
+            res="Invalid user email"
+        )
+
+    if user_send_loc == -1:
+        return jsonify(
+            res="Invalid send id"
+        )
+
+    if email_to_swap in active_users:
+        other_active = True
+        for i in range(len(active_users[email_to_swap]["portfolio"])):
+            if active_users[email_to_swap]["portfolio"][i]["id"] == id_to_receive:
+                other_send_loc = i
+    elif email_to_swap in inactive_users:
+        for i in range(len(inactive_users[email_to_swap]["portfolio"])):
+            if inactive_users[email_to_swap]["portfolio"][i]["id"] == id_to_receive:
+                other_send_loc = i
+    else:
+        return jsonify(
+            res="Invalid other email"
+        )
+
+    if other_send_loc == -1:
+        return jsonify(
+            res="Invalid other id"
+        )
+
+    if user_active and other_active:
+        active_users[user_email]["porfolio"][user_send_loc], active_users[email_to_swap]["portfolio"][other_send_loc] = active_users[email_to_swap]["portfolio"][other_send_loc], active_users[user_email]["porfolio"][user_send_loc]
+    elif user_active and not other_active:
+        active_users[user_email]["porfolio"][user_send_loc], inactive_users[email_to_swap]["portfolio"][other_send_loc] = inactive_users[email_to_swap]["portfolio"][other_send_loc], active_users[user_email]["porfolio"][user_send_loc]
+    elif not user_active and other_active:
+        inactive_users[user_email]["porfolio"][user_send_loc], active_users[email_to_swap]["portfolio"][other_send_loc] = active_users[email_to_swap]["portfolio"][other_send_loc], inactive_users[user_email]["porfolio"][user_send_loc]
+    else:
+        inactive_users[user_email]["porfolio"][user_send_loc], inactive_users[email_to_swap]["portfolio"][other_send_loc] = inactive_users[email_to_swap]["portfolio"][other_send_loc], inactive_users[user_email]["porfolio"][user_send_loc]
+    
+    set_inactive_users(inactive_users)
+    set_active_users(active_users)
+
+    return jsonify(
+        res="success"
+    )
 # helper functions
 
 def add_coupon(email):
@@ -199,15 +269,15 @@ def add_coupon(email):
     inactive_users = get_inactive_users()
 
     num = random.randint(0, 9)
-    if num < 4:
+    if num < 8:
         # add coupon
         coupon_choices = [{"name": "5% off next purchase!", "code": "1234"}, {"name": "Buy 1 get 1 free for any box of Kellogg's cereal!", "code": "1243"}]
         choice = random.randint(0, len(coupon_choices) - 1)
         coupon = coupon_choices[choice]
         if email in active_users:
-            active_users[email]['coupons'].append(coupon)
+            active_users[email]['promos'].append(coupon)
         elif email in inactive_users:
-            inactive_users[email]['coupons'].append(coupon)
+            inactive_users[email]['promos'].append(coupon)
 
     set_active_users(active_users)
     set_inactive_users(inactive_users)
