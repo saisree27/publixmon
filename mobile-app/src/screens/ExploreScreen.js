@@ -106,21 +106,41 @@ const ToyView = (props) => {
                 visible={nftVisible}
                 onRequestClose={() => setNFTVisible(false)}
             >
-                <NFTModal name={props.name} close={() => {setNFTVisible(false)}}/>
+                <NFTModal name={props.name} image={props.image} close={() => {setNFTVisible(false)}}/>
             </Modal>
         </Reanimatable.View>
     )
 }
 
 const NFTModal = (props) => {
+    const [tradeText, setTradeText] = useState("");
+    const [begun, setBegun] = useState(false);
+
+    const trade = () => {
+        console.log('trading virtual stuff lol')
+        setBegun(true);
+    }
 
     return (
         <View style={uStyles.modal}>
             <TouchableOpacity onPress={() => props.close()} style={{alignSelf: 'flex-end', marginRight: 12, marginTop: 12}}>
                 <Feather name="x" size={32} color={colors.black}/>
             </TouchableOpacity>
-            <Text style={[uStyles.body, {textAlign: "center", color: colors.dark}]}>{props.name}</Text>
-            
+            <Text style={[uStyles.body, {textAlign: "center", color: colors.dark}]}>Trade "{props.name}"?</Text>
+            <Text style={{...uStyles.message, margin: 32, textAlign: "center"}}>Enter the code for the item you're receiving or have the person you're trading with enter your code.</Text>
+            <Text style={[uStyles.header, {textAlign: "center", color: colors.dark, marginTop: 16}]}>{props.image.substring(0, 10)}</Text>
+            <TouchableOpacity onPress={() => trade()}>
+                <Feather name="refresh-ccw" size={42} color={colors.primary} style={{alignSelf: "center", margin: 32}}/>
+            </TouchableOpacity>
+            <TextInput
+               style={[uStyles.input, {marginHorizontal: 32}]} 
+               autoCapitalize='none' 
+               autoCompleteType="text"
+               autoCorrect={false}
+               placeholder={"Enter code..."}
+               onChangeText={text => setTradeText(text.trim())}
+               value={tradeText}
+            />
         </View>
     )
 }
