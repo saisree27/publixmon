@@ -19,7 +19,7 @@ const uri = `https://hackgt-8-publixmon.herokuapp.com/`;
 export default FeedScreen = () => {
     const firebase = useContext(FirebaseContext);
     const mapRef = useRef()
-    const [location, setLocation] = useState();
+    const [location, setLocation] = useState({latitude: 0.0, longitude: 0.0});
     const [otherLocations, setOtherLocations] = useState([]);
     const [region, setRegion] = useState();
     const [user, setUser] = useContext(UserContext);
@@ -35,8 +35,9 @@ export default FeedScreen = () => {
         }
         _getLocationAsync()
 
-        const interval = setInterval(() => {
-            updateLocations();
+        const interval = setInterval(async () => {
+            await updateLocations();
+            await updateUserLocation();
           }, 10000); // 10 seconds
         
           return () => clearInterval(interval);
@@ -44,9 +45,6 @@ export default FeedScreen = () => {
 
     useEffect(() => {
         setRegion({...location, latitudeDelta: 0.001, longitudeDelta: 0.001})
-        
-        // update user location on server
-       updateUserLocation();
 
     }, [location])
 
@@ -62,6 +60,7 @@ export default FeedScreen = () => {
                 location: location
             })
         });
+        return
     }
 
     const updateLocations = async () => {
@@ -79,6 +78,7 @@ export default FeedScreen = () => {
         res = await res.json();
         res = res.res;
         setOtherLocations(res);
+        return
     }
  
 

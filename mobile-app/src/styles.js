@@ -53,8 +53,6 @@ const uStyles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 16,
         marginTop: 8,
-        borderBottomColor: colors.light,
-        borderBottomWidth: 4
     },
     textButton: {
         marginHorizontal: 80,
