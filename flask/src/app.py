@@ -166,7 +166,7 @@ def transfer_style():
         new_img = str(st_image)[2:-1]
         n = name +  url[url.rindex("/") + 1:url.index(".jp")]
 
-        new_toy = {"name": n, "image": new_img, "id": ''.join(random.choice(string.lowercase) for _ in range(10))}
+        new_toy = {"name": n, "image": new_img, "id": ''.join(random.choice(string.ascii_lowercase) for _ in range(10))}
 
         if email in active_users:
             portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
