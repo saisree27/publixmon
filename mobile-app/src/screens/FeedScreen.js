@@ -64,6 +64,7 @@ export default FeedScreen = () => {
     }
 
     const updateLocations = async () => {
+        console.log("OTHER USER LOCATIONS UPDATE")
         // get locations of other users in same store from server
         let res = await fetch(uri + "/getlocations", {
             method: 'POST',
@@ -77,6 +78,8 @@ export default FeedScreen = () => {
         });
         res = await res.json();
         res = res.res;
+        console.log("OUTPUT");
+        console.log(res);
         setOtherLocations(res);
         return
     }
@@ -87,10 +90,10 @@ export default FeedScreen = () => {
             <View>
                 <MapView style={styles.map} minZoomLevel={18} region={region}>
                     <Marker coordinate={location} title={"You"} pinColor={colors.primary}/>
-                    {otherLocations.map((spot, index) => <Marker
+                    {otherLocations.map((spot, index) => spot !== null ? <Marker
                         key={index}
                         coordinate={spot}
-                    />)}
+                    /> : <></>)}
                 </MapView>
             </View>
 
