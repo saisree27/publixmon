@@ -114,6 +114,8 @@ const ToyView = (props) => {
 
 const NFTModal = (props) => {
     const [tradeText, setTradeText] = useState("");
+    const [partnerEmail, setPartnerEmail] = useState("");
+
     const [begun, setBegun] = useState(false);
 
     const trade = () => {
@@ -127,19 +129,28 @@ const NFTModal = (props) => {
                 <Feather name="x" size={32} color={colors.black}/>
             </TouchableOpacity>
             <Text style={[uStyles.body, {textAlign: "center", color: colors.dark}]}>Trade "{props.name}"?</Text>
-            <Text style={{...uStyles.message, margin: 32, textAlign: "center"}}>Enter the code for the item you're receiving or have the person you're trading with enter your code.</Text>
-            <Text style={[uStyles.header, {textAlign: "center", color: colors.dark, marginTop: 16}]}>{props.image.substring(0, 10)}</Text>
+            <Text style={{...uStyles.message, margin: 16, textAlign: "center"}}>Enter the code for the item you're receiving or have the person you're trading with enter your code.</Text>
+            <Text style={[uStyles.header, {textAlign: "center", color: colors.dark, marginTop: 8}]}>{props.image.substring(0, 10)}</Text>
             <TouchableOpacity onPress={() => trade()}>
-                <Feather name="refresh-ccw" size={42} color={colors.primary} style={{alignSelf: "center", margin: 32}}/>
+                <Feather name="refresh-ccw" size={42} color={colors.primary} style={{alignSelf: "center", margin: 16}}/>
             </TouchableOpacity>
             <TextInput
                style={[uStyles.input, {marginHorizontal: 32}]} 
                autoCapitalize='none' 
                autoCompleteType="text"
                autoCorrect={false}
-               placeholder={"Enter code..."}
+               placeholder={"Enter your trading partner's code..."}
                onChangeText={text => setTradeText(text.trim())}
                value={tradeText}
+            />
+            <TextInput
+               style={[uStyles.input, {marginHorizontal: 32}]} 
+               autoCapitalize='none' 
+               autoCompleteType="email"
+               autoCorrect={false}
+               placeholder={"Enter your trading partner's email..."}
+               onChangeText={text => setPartnerEmail(text.trim())}
+               value={partnerEmail}
             />
         </View>
     )
