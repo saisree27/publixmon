@@ -8,6 +8,7 @@ from style_transfer import data_uri_to_cv2_img, get_style_transfer
 import requests
 from urllib.request import urlopen
 import json
+import random
 
 app = Flask(__name__)
 
@@ -150,52 +151,53 @@ def delete_coupon():
 # TODO: ML routes (and corresponding user data routes to store toys and other info)
 @app.route('/styletransfer', methods = ['POST'])
 def transfer_style():
-    active_users = get_active_users()
-    inactive_users = get_inactive_users()
+    if random.random() < 0.5:
+        active_users = get_active_users()
+        inactive_users = get_inactive_users()
 
-    url = request.json["image"]
-    email = request.json["email"]
+        url = request.json["image"]
+        email = request.json["email"]
 
-    print ('[INFO] Reading the image')
-    req = urlopen(url)
-    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
-    img = cv.imdecode(arr, -1)
-    print ('[INFO] Image Loaded successfully!')
+        print ('[INFO] Reading the image')
+        req = urlopen(url)
+        arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+        img = cv.imdecode(arr, -1)
+        print ('[INFO] Image Loaded successfully!')
 
-    styled_loc, name = get_style_transfer(img)
+        styled_loc, name = get_style_transfer(img)
 
-    with open(styled_loc, "rb") as f:
-        st_image = base64.b64encode(f.read())
+        with open(styled_loc, "rb") as f:
+            st_image = base64.b64encode(f.read())
 
-    new_img = str(st_image)[2:-1]
-    n = name +  url[url.rindex("/") + 1:url.index(".jp")]
+        new_img = str(st_image)[2:-1]
+        n = name +  url[url.rindex("/") + 1:url.index(".jp")]
 
-    new_toy = {"name": n, "image": new_img}
+        new_toy = {"name": n, "image": new_img}
 
-    print("ACTIVE USERS: ")
-    print(active_users)
-    print("INACTIVE USERS: ")
-    print(inactive_users)
+        print("ACTIVE USERS: ")
+        print(active_users)
+        print("INACTIVE USERS: ")
+        print(inactive_users)
 
-    if email in active_users:
-        portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
-        portfolio.append(new_toy)
-        active_users[email]['portfolio'] = portfolio
-    elif email in inactive_users:
-        portfolio = inactive_users[email]['portfolio']
-        portfolio.append(new_toy)
-        inactive_users[email]['portfolio'] = portfolio
-    else:
-        print("This doesn't make sense. The email does not exist!")
-    
-    set_active_users(active_users)
-    set_inactive_users(inactive_users)
+        if email in active_users:
+            portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
+            portfolio.append(new_toy)
+            active_users[email]['portfolio'] = portfolio
+        elif email in inactive_users:
+            portfolio = inactive_users[email]['portfolio']
+            portfolio.append(new_toy)
+            inactive_users[email]['portfolio'] = portfolio
+        else:
+            print("This doesn't make sense. The email does not exist!")
+        
+        set_active_users(active_users)
+        set_inactive_users(inactive_users)
 
-    return jsonify(
-        style_transfer=new_img,
-        img_name=n
-    )
-    
+        return jsonify(
+            style_transfer=new_img,
+            img_name=n
+        )
+    return jsonify(img_name="NONE")
 
 # TODO: NCR API routes (and corresponding user data routes)
 
