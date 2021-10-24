@@ -43,14 +43,10 @@ def add_user():
     active_users = get_active_users()
     inactive_users = get_inactive_users()
 
-    print("Adduser:")
     email = request.json['email']
     store = request.json['store']
-    print(email, store)
     user = inactive_users.pop(email, {"location": None, "portfolio": [], "promos": [], "store": store})
-    print(user)
     active_users[email] = user
-    print(active_users)
     
     set_active_users(active_users)
     set_inactive_users(inactive_users)
@@ -60,14 +56,10 @@ def remove_user():
     active_users = get_active_users()
     inactive_users = get_inactive_users()
 
-    print("removeuser:")
     email = request.json['email']
-    print(email)
     user = active_users.pop(email, {"location": None, "portfolio": [], "promos": [], "store": None})
-    print(user)
     user['store'] = None
     inactive_users[email] = user
-    print(inactive_users)
 
     set_active_users(active_users)
     set_inactive_users(inactive_users)
@@ -90,10 +82,6 @@ def get_portfolio():
     inactive_users = get_inactive_users()
 
     email = request.json['email']
-    print("GET PORTFOLIO")
-    print(email)
-    print(active_users)
-    print(inactive_users)
 
     set_active_users(active_users)
     set_inactive_users(inactive_users)
@@ -174,11 +162,6 @@ def transfer_style():
 
         new_toy = {"name": n, "image": new_img}
 
-        print("ACTIVE USERS: ")
-        print(active_users)
-        print("INACTIVE USERS: ")
-        print(inactive_users)
-
         if email in active_users:
             portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
             portfolio.append(new_toy)
@@ -199,6 +182,7 @@ def transfer_style():
             style_transfer=new_img,
             img_name=n
         )
+    print("User didn't win anything.")
     return jsonify(img_name="NONE")
 
 # TODO: NCR API routes (and corresponding user data routes)
