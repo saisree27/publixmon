@@ -71,7 +71,12 @@ def update_location():
 
     email = request.json['email']
     location = request.json['location']
-    active_users[email]['location'] = location
+    if email in active_users:
+        active_users[email]['location'] = location
+    elif email in inactive_users:
+        inactive_users[email]['location'] = location
+    else:
+        print("Something's wrong.")
 
     set_active_users(active_users)
     set_inactive_users(inactive_users)
@@ -194,7 +199,7 @@ def add_coupon(email):
     inactive_users = get_inactive_users()
 
     num = random.randint(0, 9)
-    if num == 0:
+    if num < 4:
         # add coupon
         coupon_choices = [{"name": "5% off next purchase!", "code": "1234"}, {"name": "Buy 1 get 1 free for any box of Kellogg's cereal!", "code": "1243"}]
         choice = random.randint(0, len(coupon_choices) - 1)
