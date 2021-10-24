@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react'
-import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, FlatList, Modal} from 'react-native'
+import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, FlatList, ActivityIndicator} from 'react-native'
 import {Feather, AntDesign} from "@expo/vector-icons";
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Constants from "expo-constants";
@@ -22,7 +22,7 @@ export default ProfileScreen = () => {
 
     const [scanned, setScanned] = useState(false);
     const [store, setStore] = useState("");
-    const [update, setUpdate] = useState("");
+    const [update, setUpdate] = useState(null);
 
     const logOut = async () => {
         const loggedOut = await firebase.logOut();
@@ -45,6 +45,7 @@ export default ProfileScreen = () => {
             })
         });
         // Get random item from NCR API
+        setUpdate("")
         apiBackend().then((result) => {
             console.log(result);    
             // generate toys on backend
@@ -73,7 +74,7 @@ export default ProfileScreen = () => {
     }
 
     const checkIn = async () => {
-        setUpdate("")
+        setUpdate(null)
         const { status } = await BarCodeScanner.requestPermissionsAsync();
         if (status !== 'granted') {
             alert("Please give this app camera permissions to be able to check in to stores!")
@@ -84,7 +85,7 @@ export default ProfileScreen = () => {
     }
 
     const handleBarCodeScanned = ({ type, data }) => {
-        setUpdate("")
+        setUpdate(null)
         if (data.includes("publixmon_store_id=")) {
             setScanned(true);
             let place = data.split("=")[1]
@@ -135,9 +136,13 @@ export default ProfileScreen = () => {
  
             </View>
             }
-            {update.length > 0 ?
+            {update !== null ?
                 <View style={{...uStyles.commentCard, backgroundColor: colors.light, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}}>
+                    {update.length == 0 ? 
+                    <ActivityIndicator size="small" color={colors.dark}/>
+                        :
                     <Text style={[uStyles.subheader, {textAlign: "center", padding: 16}]}>{update}</Text>
+                    }
                 </View>
             :  
                 null
