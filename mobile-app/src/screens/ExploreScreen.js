@@ -96,7 +96,7 @@ const ToyView = (props) => {
 
     return (
         <Reanimatable.View animation={"tada"} duration={500}>
-            <TouchableOpacity style={{padding: 8, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}} onPress={() => showToy()}>
+            <TouchableOpacity style={{width: 175, height: 200, padding: 8, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}} onPress={() => showToy()}>
                 <Text style={[uStyles.message, {padding: 4, textAlign: "center"}]}>{props.name}</Text>
                 <Image style={{width: 150, height: 150, resizeMode: "contain", borderRadius: 8}} source={{uri: 'data:image/png;base64,' + props.image}}/>
             </TouchableOpacity>
@@ -113,6 +113,8 @@ const ToyView = (props) => {
 }
 
 const NFTModal = (props) => {
+    const [user, setUser] = useContext(UserContext);
+
     const [tradeText, setTradeText] = useState("");
     const [partnerEmail, setPartnerEmail] = useState("");
 
