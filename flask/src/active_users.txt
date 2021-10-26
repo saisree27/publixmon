@@ -1,0 +1,5 @@
+{
+  "ragarwal84@gatech.edu": {
+    "location": {"latitude": 33.7766764817335, "longitude": -84.396}, "portfolio": [], "promos": [], "store": "lala"
+  }
+}

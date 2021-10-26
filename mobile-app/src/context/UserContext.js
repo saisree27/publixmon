@@ -8,7 +8,7 @@ const UserProvider = (props) => {
         email: "",
         uid: "",
         isLoggedIn: null,
-        profilePhotoUrl: "default"
+        store: ""
     });
 
     return <UserContext.Provider value={[state, setState]}>{props.children}</UserContext.Provider>;
