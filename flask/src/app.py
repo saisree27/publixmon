@@ -7,6 +7,21 @@ import cv2 as cv
 from style_transfer import data_uri_to_cv2_img, get_style_transfer
 import requests
 from urllib.request import urlopen
+import json
+from web3 import Web3
+from solcx import install_solc,compile_files
+contractAddress= "0x76Ee169EDe9D23eD7070572227b01A7d7424484E"
+w3 = Web3(Web3.HTTPProvider('http://localhost:7545/'))
+f = open("../../NFT/build/contracts/StyleTransferImage.json");
+STIToken = json.load(f)
+Contract=w3.eth.contract(abi=STIToken['abi'], bytecode=STIToken['bytecode'])
+w3.eth.default_account = w3.eth.accounts[0]
+tx_hash = Contract.deploy()
+tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+deployed = w3.eth.contract(
+            address=tx_receipt.contractAddress,
+            abi=STIToken['abi'])
+
 
 app = Flask(__name__)
 
@@ -75,6 +90,8 @@ def transfer_style():
         img_name=name +  url[url.rindex("/") + 1:url.index(".jp")]
     )
     
+
+
 
 # TODO: NCR API routes (and corresponding user data routes)
 
