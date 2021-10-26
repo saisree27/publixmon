@@ -2,21 +2,53 @@ import React, {useContext, useEffect, useState} from 'react'
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, ImageBackground, ScrollView, Image, FlatList, Modal} from 'react-native'
 import {Feather} from "@expo/vector-icons";
 import Barcode from 'react-native-barcode-expo';
+import Constants from "expo-constants";
+import * as Reanimatable from 'react-native-animatable';
 
 import {uStyles, colors} from '../styles.js'
 import {FirebaseContext} from "../context/FirebaseContext"
 import { UserContext } from '../context/UserContext'
 
-export default RewardsScreen = () => {
+const { manifest } = Constants;
+// const uri = `http://${manifest.debuggerHost.split(':').shift()}:5000`;
+const uri = `https://hackgt-8-publixmon.herokuapp.com/`;
+
+export default RewardsScreen = ({navigation}) => {
+
+    let temp = [{name: "Free food for life!", code: "1234"}, {name: "Dish soap 50% off", code: "2314"}]
 
     const [user, setUser] = useContext(UserContext);
     const firebase = useContext(FirebaseContext);
-    const [coupons, setCoupons] = useState([{code: "1234", name: "5% off next purchase of $10 or more!"}, {code: "1243", name: "Buy 1 get 1 free for any Kellogg's cereal box!"}]);
+    const [coupons, setCoupons] = useState([]);
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
-        // TODO: load coupons from server
+        loadCoupons();
     }, []);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+          loadCoupons();
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    const loadCoupons = async () => {
+        // load coupons from server
+        let res = await fetch(uri + "/getcoupons", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user.email,
+            })
+        });
+        res = await res.json();
+        res = res.res;
+        setCoupons(res);
+    }
 
     const deleteCoupon = (index) => {
         let couponList = coupons; // delete coupon from frontend
@@ -32,7 +64,7 @@ export default RewardsScreen = () => {
         <View style={styles.container}>
 
             {/* <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>{user.email.toLowerCase()}</Text> */}
-            <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>You have {coupons.length} rewards to redeem!</Text>
+            <Text style={[uStyles.header, {marginTop: 16, marginBottom: 16}]}>You have <Text style={{color: colors.primary}}>{coupons.length} rewards</Text> to redeem!</Text>
 
 
 
@@ -52,17 +84,31 @@ export default RewardsScreen = () => {
 }
 
 const CouponView = (props) => {
+    const [user, setUser] = useContext(UserContext);
+
     const [barcodeVisible, setBarcodeVisible] = useState(false);
 
-    const redeem = () => {
+    const redeem = async () => {
         setBarcodeVisible(true);
-        // TODO: delete coupon from server
+        // delete coupon from server
+        let res = await fetch(uri + "/deletecoupon", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: user['email'],
+                code: props.coupon['code']
+            })
+        });
+
     }
 
     return (
-        <View>
-            <TouchableOpacity style={{padding: 8, backgroundColor: colors.light, borderRadius: 4, margin: 8}} onPress={() => redeem()}>
-                <Text style={[uStyles.subheader, {padding: 4, textAlign: "center", color: colors.dark}]}>Redeem {props.coupon.name}</Text>
+        <Reanimatable.View animation={"tada"} duration={500}>
+            <TouchableOpacity style={{...uStyles.commentCard, backgroundColor: colors.light, shadowOpacity: 0.2, shadowRadius: 10, shadowOffset: {width: -4, height: 4}, shadowColor: colors.black}} onPress={() => redeem()}>
+                <Text style={[uStyles.subheader, {padding: 4, textAlign: "center", color: colors.dark}]}>{props.coupon.name}</Text>
             </TouchableOpacity>
         
             <Modal
@@ -73,7 +119,7 @@ const CouponView = (props) => {
             >
                 <BarCodeModal coupon={props.coupon} close={() => {props.deleteCoupon(props.name); setBarcodeVisible(false);}}/>
             </Modal>
-        </View>
+        </Reanimatable.View>
         
                     
     )
@@ -97,6 +143,6 @@ const BarCodeModal = (props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.dark,
+        backgroundColor: colors.white,
     },
 });
