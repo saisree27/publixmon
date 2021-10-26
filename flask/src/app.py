@@ -196,12 +196,8 @@ def transfer_style():
 
 # TODO: NCR API routes (and corresponding user data routes)
 
-
-<<<<<<< HEAD
-
-=======
 # helper functions
->>>>>>> origin/main
+
 def add_toy(email, toy):
     if email in active_users:
         portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
@@ -237,10 +233,6 @@ def swap():
         for i in range(len(inactive_users[user_email]["portfolio"])):
             if inactive_users[user_email]["portfolio"][i]["id"] == id_to_send:
                 user_send_loc = i
-<<<<<<< HEAD
->>>>>>> 034ab761c276d3837a50c46cf935eaa099c428e7
-=======
->>>>>>> origin/main
     else:
         return jsonify(
             res="Invalid user email"
@@ -308,13 +300,4 @@ def add_coupon(email):
 
 # run the app
 if __name__ == '__main__':
-<<<<<<< HEAD
-<<<<<<< HEAD
-    app.run(host='0.0.0.0', port=105)
-=======
     app.run(host="0.0.0.0")
->>>>>>> 034ab761c276d3837a50c46cf935eaa099c428e7
-=======
-    app.run(host='0.0.0.0', port=105)
-    app.run(host="0.0.0.0")
->>>>>>> origin/main
