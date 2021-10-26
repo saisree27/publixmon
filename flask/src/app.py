@@ -197,8 +197,7 @@ def transfer_style():
 # TODO: NCR API routes (and corresponding user data routes)
 
 
-<<<<<<< HEAD
-# helper functions
+
 def add_toy(email, toy):
     if email in active_users:
         portfolio = active_users[email]['portfolio'] # TODO: exact storage may change based on ML API
@@ -208,7 +207,7 @@ def add_toy(email, toy):
         portfolio = inactive_users[email]['portfolio']
         portfolio.append(toy)
         inactive_users[email]['portfolio'] = portfolio
-=======
+
 
 @app.route('/swap', methods = ['POST'])
 def swap():
