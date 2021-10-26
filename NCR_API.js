@@ -1,8 +1,6 @@
 function createHMAC(sharedKey, secretKey, httpMethod, requestURL, contentType, nepOrganization, nepServiceVersion, contentMD5, nepApplicationKey, nepCorrelationID,  nepEnterpriseUnit) {
-  const sdk = require('postman-collection');
   const cryptojs = require('crypto-js');
-  const url = new sdk.Url(requestURL);
-  const uri = encodeURI(url.getPathWithQuery());
+  const uri = requestURL.trim().replace(/^https?:\/\/[^\/]+\//, '/');
   const d = new Date();
   d.setMilliseconds(0);
   const time = d.toISOString();
